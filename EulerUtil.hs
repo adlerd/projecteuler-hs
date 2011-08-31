@@ -14,3 +14,6 @@ factors x = factors' primes x
 
 by :: (a -> a -> b) -> (c -> a) -> (c -> c -> b)
 by d m x y = (m x) `d` (m y)
+
+allBut :: Int -> [a] -> [a]
+allBut n xs = zipWith (\a b -> a) xs $ drop n xs
