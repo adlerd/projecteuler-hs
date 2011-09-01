@@ -2,12 +2,13 @@ module Set0 (set0) where
 
 import Atkin (primes)
 import Sorted (union, count, uncount)
-import EulerUtil (factors, by, allBut)
+import EulerUtil (factors, by, allBut, iSqrt)
 import Data.List (sort, groupBy, maximumBy, tails)
 import Data.Ord (comparing)
 import Input (input8)
+import Data.Maybe (catMaybes)
 
-set0 = [undefined,euler1,euler2,euler3,euler4,euler5,euler6,euler7,euler8]
+set0 = [undefined,euler1,euler2,euler3,euler4,euler5,euler6,euler7,euler8,euler9]
 
 euler1 = show . sum $ union [3,6..999] [5,10..999]
 
@@ -37,3 +38,11 @@ euler7 = show $ primes !! 10000
 
 euler8 = show . maximum . map product . filter (not . elem 0) . map (take 5)
           . allBut 6 . tails $ input8
+
+euler9 = show . product3 . head . filter ((== 1000) . sum3) . catMaybes
+         $ [testPair a b | b <- [2..], a <- [1..b]]
+    where
+      sum3 (a,b,c) = a + b + c
+      product3 (a,b,c) = a * b * c
+      testPair a b = do c <- iSqrt (a^2+b^2)
+                        return (a,b,c)
