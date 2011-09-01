@@ -2,7 +2,7 @@ module Set0 (set0) where
 
 import Atkin (primes)
 import Sorted (union, count, uncount)
-import EulerUtil (factors, by, allBut, iSqrt)
+import EulerUtil (factors, by, allBut, iSqrt, slide)
 import Data.List (sort, groupBy, maximumBy, tails)
 import Data.Ord (comparing)
 import Input (input8)
@@ -36,8 +36,7 @@ euler6 = show $ ((^ 2) . sum $ [1..100]) - (sum . map (^ 2) $ [1..100])
 
 euler7 = show $ primes !! 10000
 
-euler8 = show . maximum . map product . filter (not . elem 0) . map (take 5)
-          . allBut 6 . tails $ input8
+euler8 = show . maximum . map product . filter (not . elem 0) . slide 5 $ input8
 
 euler9 = show . product3 . head . filter ((== 1000) . sum3) . catMaybes
          $ [testPair a b | b <- [2..], a <- [1..b]]

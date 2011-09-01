@@ -1,7 +1,7 @@
 module EulerUtil where
 
 import Atkin
-import Data.List (unfoldr)
+import Data.List (unfoldr, tails)
 import Sorted (count, uncount)
 
 factors x = factors' primes x
@@ -22,3 +22,6 @@ allBut n xs = zipWith (\a b -> a) xs $ drop n xs
 iSqrt x = if (guess * guess) == x then Just guess else Nothing
     where
       guess = round . sqrt . fromIntegral $ x
+
+slide :: Int -> [a] -> [[a]]
+slide n = map (take n) . allBut n . tails
