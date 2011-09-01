@@ -25,3 +25,8 @@ iSqrt x = if (guess * guess) == x then Just guess else Nothing
 
 slide :: Int -> [a] -> [[a]]
 slide n = map (take n) . allBut n . tails
+
+divisorCount n
+    | n > 1 = (product . map ((1 +) . snd) . count . factors $ n)
+    | n == 1 = 1
+    | otherwise = undefined

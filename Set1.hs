@@ -1,12 +1,13 @@
 module Set1 (set1) where
 
 import Atkin (primes)
-import EulerUtil (slide)
-import Data.List (unfoldr)
-import Input (input11)
+import EulerUtil (slide,divisorCount)
+import Data.List (unfoldr,find)
+import Input (input11, input13)
 import Data.Array.IArray ((!), bounds)
+import Data.Maybe (fromJust)
 
-set1 = [euler10,euler11,undefined,undefined,undefined,undefined,undefined,undefined,undefined,undefined]
+set1 = [euler10,euler11,euler12,euler13,undefined,undefined,undefined,undefined,undefined,undefined]
 
 euler10 = show . sum . takeWhile (< 2000000) $ primes
 
@@ -22,3 +23,7 @@ euler11 = show . maximum . map product . concatMap (slide 4) $ concat [rows,cols
       d2 = map (\(r0,c0) -> map inX $ zip [r0..rmax] [c0..cmax])
            d2'
       d2' = (zip [rmax,rmax-1..rmin] (repeat cmin)) ++ (zip (repeat rmin) [cmin+1..cmax])
+
+euler12 = show . fromJust . find ((> 500) . divisorCount) $ scanl1 (+) [1..]
+
+euler13 = take 10 . show . sum $ input13
