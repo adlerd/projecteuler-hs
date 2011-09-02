@@ -4,7 +4,8 @@ import Atkin
 import Data.List (unfoldr, tails)
 import Sorted (count, uncount)
 
-factors x = factors' primes x
+factors x
+    | x > 0 = factors' primes x
     where
       factors' _ 1 = []
       factors' pp@(p:ps) x
