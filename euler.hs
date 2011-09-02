@@ -2,8 +2,9 @@ module Main where
 
 import Set0
 import Set1
+import Set2
 
-sets = [set0, set1]
+sets = [set0, set1,set2]
 
 driver input = (sets !! s) !! p
     where

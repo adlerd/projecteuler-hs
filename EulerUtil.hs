@@ -31,3 +31,12 @@ divisorCount n
     | n > 1 = (product . map ((1 +) . snd) . count . factors $ n)
     | n == 1 = 1
     | otherwise = undefined
+
+divisorFun 0 = divisorCount
+divisorFun 1 = sum . divisors
+divisorFun n = sum . map (^ n) . divisors 
+
+divisors n = map (product . uncount . zip pfs) . enumerateMCs $ fcs
+    where
+      (pfs,fcs) = unzip . count . factors $ n
+      enumerateMCs = foldr (\ct mcs -> concatMap (\mc -> map (:mc) [0..ct]) mcs) [[]]
