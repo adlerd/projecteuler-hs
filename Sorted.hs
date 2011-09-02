@@ -57,3 +57,4 @@ uncount [] = []
 uncount ((i,c):rest)
     | c == 1 = i : uncount rest
     | c > 1 = i : uncount ((i,c-1):rest)
+    | c == 0 = uncount rest
