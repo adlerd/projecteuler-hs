@@ -12,3 +12,5 @@ driver input = (sets !! s) !! p
 main = do tmp <- getLine
           putStrLn ('>' : driver tmp)
           main
+
+--main = mapM_ (putStrLn . show) . zip [1..] . tail . concat $ sets
