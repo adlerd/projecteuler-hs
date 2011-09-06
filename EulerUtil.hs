@@ -40,3 +40,7 @@ divisors n = map (product . uncount . zip pfs) . enumerateMCs $ fcs
     where
       (pfs,fcs) = unzip . count . factors $ n
       enumerateMCs = foldr (\ct mcs -> concatMap (\mc -> map (:mc) [0..ct]) mcs) [[]]
+
+fibonacci = fib 1 1
+    where
+      fib a b = a : fib b (b+a)

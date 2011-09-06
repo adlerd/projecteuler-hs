@@ -2,7 +2,7 @@ module Set0 (set0) where
 
 import Atkin (primes)
 import Sorted (union, count, uncount)
-import EulerUtil (factors, by, allBut, iSqrt, slide)
+import EulerUtil (factors, by, allBut, iSqrt, slide,fibonacci)
 import Data.List (sort, groupBy, maximumBy, tails)
 import Data.Ord (comparing)
 import Input (input8)
@@ -11,10 +11,6 @@ import Data.Maybe (catMaybes)
 set0 = [undefined,euler1,euler2,euler3,euler4,euler5,euler6,euler7,euler8,euler9]
 
 euler1 = show . sum $ union [3,6..999] [5,10..999]
-
-fibonacci = fib 1 1
-    where
-      fib a b = a : fib b (b+a)
 
 euler2 = show . sum . takeWhile (< 4000000) . filter even $ fibonacci
 
