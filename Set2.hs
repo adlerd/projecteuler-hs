@@ -7,8 +7,10 @@ import Input (input22)
 import qualified Data.Char (ord)
 import Data.List (sort)
 import Data.Maybe (fromJust)
+import qualified PQ
+import Sorted (mapElem)
 
-set2 = [euler20,euler21,euler22,undefined,undefined,undefined,undefined,undefined,undefined,undefined]
+set2 = [euler20,euler21,euler22,euler23,undefined,undefined,undefined,undefined,undefined,undefined]
 
 euler20 = show . sum . map digitToInt . show . product $ [1..100]
 
@@ -27,3 +29,26 @@ euler22 = show . sum . zipWith (*) [1..] . map (sum . map (fromJust . (`lookup` 
           . sort $ input22
     where
       vals = zip ['A'..'Z'] [1..]
+
+euler23 = abundantTable `seq` show . sum . filter (not . isAbundantSum) $ [1..28123]
+    where
+      abundantTable :: UArray Int Bool
+      abundantTable = listArray (1,28123) . mapElem [1..28123] $ abundants
+      isAbundantSum :: Int -> Bool
+      isAbundantSum n = any ((abundantTable !) . (n -)) . takeWhile (< n) $ abundants
+      abundants = abundantReverseSieve [1..]
+      abundantReverseSieve xs = first : sieve (ins first PQ.Empty) rest
+          where
+            isAbundant x = (divisorFun 1 x) > (2*x)
+            (first:rest) = dropWhile (not . isAbundant) xs
+            ins n q = PQ.insert (map (n*) [2..]) q
+            sieve _ [] = []
+            sieve q@(PQ.Queue (f:fs) _) xx@(x:xs)
+                = case compare f x of
+                    LT -> sieve (adv q fs) xx
+                    GT -> case compare (divisorFun 1 x) (2*x) of
+                      LT -> sieve q xs
+                      GT -> x : sieve (ins x q) xs
+                      EQ -> sieve (ins x q) xs
+                    EQ -> f : sieve (adv q fs) xs
+            adv q fs = PQ.insert fs $ PQ.deleteMin q
