@@ -1,16 +1,16 @@
 module Set2 (set2) where
 
-import EulerUtil (factors,divisorFun)
-import Data.Char (digitToInt)
+import EulerUtil (factors,divisorFun,fibonacci)
+import Data.Char (digitToInt, intToDigit)
 import Data.Array.Unboxed (listArray,UArray,(!))
 import Input (input22)
 import qualified Data.Char (ord)
-import Data.List (sort)
+import Data.List (sort, inits, tails)
 import Data.Maybe (fromJust)
 import qualified PQ
 import Sorted (mapElem)
 
-set2 = [euler20,euler21,euler22,euler23,undefined,undefined,undefined,undefined,undefined,undefined]
+set2 = [euler20,euler21,euler22,euler23,euler24,euler25,undefined,undefined,undefined,undefined]
 
 euler20 = show . sum . map digitToInt . show . product $ [1..100]
 
@@ -52,3 +52,15 @@ euler23 = abundantTable `seq` show . sum . filter (not . isAbundantSum) $ [1..28
                       EQ -> sieve (ins x q) xs
                     EQ -> f : sieve (adv q fs) xs
             adv q fs = PQ.insert fs $ PQ.deleteMin q
+
+euler24 = map (intToDigit) . (!! 999999) . lexPermutations $ [0..9]
+    where
+      lexPermutations :: [a] -> [[a]]
+      lexPermutations [] = [[]]
+      lexPermutations xs = concatMap (\(a,b) -> map (a:) (lexPermutations b))
+                           . selectAntiSelect $ xs
+          where
+            selectAntiSelect xs = zip xs . zipWith (++) (inits xs) . tail . tails $ xs
+
+euler25 = show . fst . head . dropWhile ((< 1000) . length . show . snd) . zip [1..]
+          $ fibonacci
