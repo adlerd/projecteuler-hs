@@ -3,7 +3,7 @@ module EulerUtil where
 import Atkin
 import Data.List (unfoldr, tails,inits)
 import Sorted (count, uncount)
-import Data.Char (digitToInt)
+import Data.Char (digitToInt,intToDigit)
 
 factors x
     | x > 0 = factors' primes x
@@ -48,5 +48,7 @@ fibonacci = fib 1 1
 
 digits :: (Integral a) => a -> [Int]
 digits = map digitToInt . show
+undigits :: (Integral a, Read a) => [Int] -> a
+undigits = read . map intToDigit
 
 selectAntiSelect xs = zip xs . zipWith (++) (inits xs) . tail . tails $ xs
