@@ -1,16 +1,18 @@
 module Set2 (set2) where
 
+import Atkin (primes)
 import EulerUtil (factors,divisorFun,fibonacci)
 import Data.Char (digitToInt, intToDigit)
 import Data.Array.Unboxed (listArray,UArray,(!))
 import Input (input22)
 import qualified Data.Char (ord)
-import Data.List (sort, inits, tails)
+import Data.List (sort,inits,tails,elemIndex,maximumBy)
+import Data.Ord (comparing)
 import Data.Maybe (fromJust)
 import qualified PQ
 import Sorted (mapElem)
 
-set2 = [euler20,euler21,euler22,euler23,euler24,euler25,undefined,undefined,undefined,undefined]
+set2 = [euler20,euler21,euler22,euler23,euler24,euler25,euler26,undefined,undefined,undefined]
 
 euler20 = show . sum . map digitToInt . show . product $ [1..100]
 
@@ -64,3 +66,15 @@ euler24 = map (intToDigit) . (!! 999999) . lexPermutations $ [0..9]
 
 euler25 = show . fst . head . dropWhile ((< 1000) . length . show . snd) . zip [1..]
           $ fibonacci
+
+euler26 = show . maximumBy (comparing recRep) $ [1..999]
+    where
+      recRep n = recRep' . product $ threes ++ rest
+          where
+            (threes,more) = span (3 ==) . dropWhile (2 ==) $ factors n
+            rest = dropWhile (5 ==) more
+            recRep' 1 = 0
+            recRep' n =  (1+) . fromJust . elemIndex start . tail .
+                         iterate ((10*) . (`rem` n)) $ start
+                where
+                  start = head . dropWhile (< n) . iterate (10 *) $ 1
