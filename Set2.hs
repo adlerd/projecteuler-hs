@@ -1,8 +1,8 @@
 module Set2 (set2) where
 
 import Atkin (primes)
-import EulerUtil (factors,divisorFun,fibonacci)
-import Data.Char (digitToInt, intToDigit)
+import EulerUtil (factors,divisorFun,fibonacci,digits)
+import Data.Char (intToDigit)
 import Data.Array.Unboxed (listArray,UArray,(!))
 import Input (input22)
 import qualified Data.Char (ord)
@@ -14,7 +14,7 @@ import Sorted (mapElem,elem,nub,mergeMany)
 
 set2 = [euler20,euler21,euler22,euler23,euler24,euler25,euler26,euler27,euler28,euler29]
 
-euler20 = show . sum . map digitToInt . show . product $ [1..100]
+euler20 = show . sum . digits . product $ [1..100]
 
 euler21 = show . sum . filter valid $ [2..9999]
     where

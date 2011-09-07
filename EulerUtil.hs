@@ -3,6 +3,7 @@ module EulerUtil where
 import Atkin
 import Data.List (unfoldr, tails)
 import Sorted (count, uncount)
+import Data.Char (digitToInt)
 
 factors x
     | x > 0 = factors' primes x
@@ -44,3 +45,6 @@ divisors n = map (product . uncount . zip pfs) . enumerateMCs $ fcs
 fibonacci = fib 1 1
     where
       fib a b = a : fib b (b+a)
+
+digits :: (Integral a) => a -> [Int]
+digits = map digitToInt . show
