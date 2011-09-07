@@ -10,9 +10,9 @@ import Data.List (sort,inits,tails,elemIndex,maximumBy)
 import Data.Ord (comparing)
 import Data.Maybe (fromJust)
 import qualified PQ
-import Sorted (mapElem)
+import Sorted (mapElem,elem,nub,mergeMany)
 
-set2 = [euler20,euler21,euler22,euler23,euler24,euler25,euler26,undefined,undefined,undefined]
+set2 = [euler20,euler21,euler22,euler23,euler24,euler25,euler26,euler27,euler28,euler29]
 
 euler20 = show . sum . map digitToInt . show . product $ [1..100]
 
@@ -78,3 +78,16 @@ euler26 = show . maximumBy (comparing recRep) $ [1..999]
                          iterate ((10*) . (`rem` n)) $ start
                 where
                   start = head . dropWhile (< n) . iterate (10 *) $ 1
+
+euler27 = show . fst . maximumBy (comparing snd)
+          $ [(a*b, primeCount a b) | a <- [-999..999], b <- dropWhile (<= (- a)) bPrimes]
+    where
+      bPrimes = takeWhile (< 1000) primes
+      primeCount a b = length . takeWhile (`Sorted.elem` primes) $ values
+          where
+            values = map (\n -> n^2 + n*a + b) [0..]
+
+euler28 = show . (1+) . sum . map (\n -> 4*n^2-6*n+6) $ [3,5..1001]
+
+euler29 = show . length . Sorted.nub . mergeMany
+          $ [[a^b | b <- [2..100]] | a <- [2..100]]
