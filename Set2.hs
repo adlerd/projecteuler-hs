@@ -1,7 +1,7 @@
 module Set2 (set2) where
 
 import Atkin (primes)
-import EulerUtil (factors,divisorFun,fibonacci,digits)
+import EulerUtil (factors,divisorFun,fibonacci,digits,selectAntiSelect)
 import Data.Char (intToDigit)
 import Data.Array.Unboxed (listArray,UArray,(!))
 import Input (input22)
@@ -61,8 +61,6 @@ euler24 = map (intToDigit) . (!! 999999) . lexPermutations $ [0..9]
       lexPermutations [] = [[]]
       lexPermutations xs = concatMap (\(a,b) -> map (a:) (lexPermutations b))
                            . selectAntiSelect $ xs
-          where
-            selectAntiSelect xs = zip xs . zipWith (++) (inits xs) . tail . tails $ xs
 
 euler25 = show . fst . head . dropWhile ((< 1000) . length . show . snd) . zip [1..]
           $ fibonacci

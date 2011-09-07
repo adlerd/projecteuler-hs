@@ -1,7 +1,7 @@
 module EulerUtil where
 
 import Atkin
-import Data.List (unfoldr, tails)
+import Data.List (unfoldr, tails,inits)
 import Sorted (count, uncount)
 import Data.Char (digitToInt)
 
@@ -48,3 +48,5 @@ fibonacci = fib 1 1
 
 digits :: (Integral a) => a -> [Int]
 digits = map digitToInt . show
+
+selectAntiSelect xs = zip xs . zipWith (++) (inits xs) . tail . tails $ xs
