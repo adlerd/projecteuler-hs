@@ -52,3 +52,7 @@ undigits :: (Integral a, Read a) => [Int] -> a
 undigits = read . map intToDigit
 
 selectAntiSelect xs = zip xs . zipWith (++) (inits xs) . tail . tails $ xs
+
+isPalindrome xs = take n xs == take n (reverse xs)
+    where
+      n = length xs `quot` 2

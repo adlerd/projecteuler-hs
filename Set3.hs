@@ -1,14 +1,15 @@
 module Set3 (set3) where
 
-import EulerUtil (digits,undigits,selectAntiSelect,allBut)
-import Data.List (sort,inits,tails)
-import Sorted (nub,mapElem)
+import EulerUtil (digits,undigits,selectAntiSelect,allBut,isPalindrome,iSqrt)
+import Data.List (sort,inits,tails,unfoldr,maximumBy)
+import Sorted (nub,mapElem,elem,count)
 import Data.Ratio
 import Data.Maybe (mapMaybe)
+import Data.Ord (comparing)
 import Atkin (primes)
 import Data.Array.Unboxed (listArray,UArray,(!))
 
-set3 = take 10 $ [euler30,euler31,euler32,euler33,euler34,euler35] ++ repeat undefined
+set3 = [euler30,euler31,euler32,euler33,euler34,euler35,euler36,euler37,euler38,euler39]
 
 euler30 = show . sum . filter (\x -> x == (sum . map (^5) . digits $ x)) $ [2..200000]
 
@@ -58,3 +59,38 @@ euler35 = primeMap `seq` show . length . filter circularPrime . takeWhile (< 100
       circularPrime = all (primeMap !) . sort . allBut 1 . numCircles
       primeMap :: UArray Int Bool
       primeMap = listArray (1,999999) $ [1..999999] `Sorted.mapElem` primes
+
+euler36 = show . sum . filter (\x -> (isPalindrome . toBits $ x) &&
+                                     (isPalindrome . digits $ x))
+          $ [1,3..999999]
+    where
+      toBits = unfoldr oneBit
+      oneBit n
+          | n == 0 = Nothing
+          | even n = Just (0, n `quot` 2)
+          | otherwise = Just (1, n `quot` 2)
+
+euler37 = show . sum . take 11 . filter trunctablePrime . drop 4 $ primes
+    where
+      trunctablePrime :: Int -> Bool
+      trunctablePrime n = all id . (`Sorted.mapElem` primes) . sort . map undigits
+                          . concatMap ($ digits n)
+                          $ [tail . inits, allBut 1 . tails]
+
+euler38 = show . maximum . concatMap cProds $ [1..10000]
+    where
+      pandigital :: [Int] -> Bool
+      pandigital = ([1..9] ==) . sort
+      firstGroup :: (a -> Bool) -> [a] -> [a]
+      firstGroup p = takeWhile p . dropWhile (not . p)
+      cProds :: Int -> [Int]
+      cProds n = map undigits . filter pandigital . firstGroup ((9==) . length)
+                 . map (concatMap (digits . (n*))) . drop 2 . inits $ [1..9]
+
+euler39 = show . fst . maximumBy (comparing snd) . count . sort $ relevantPythagPs
+    where
+      relevantPythagPs = filter (<=1000) . map (\(a,b,c) -> a+b+c)
+                        . takeWhile (\(_,b,_) -> 2*b < 1000) $ pythags
+      pythags = mapMaybe testPair [(a,b) | b <- [2..], a <- [1..b]]
+      testPair (a,b) = do c <- iSqrt (a^2+b^2)
+                          return (a,b,c)
