@@ -13,7 +13,9 @@ driver input = (sets !! s) !! p
       (s,p) = (read input :: Int) `quotRem` 10      
 
 main = do tmp <- getLine
-          putStrLn ('>' : driver tmp)
-          main
+          if tmp == "q"
+          then return ()
+          else do putStrLn ('>' : driver tmp)
+                  main          
 
 --main = mapM_ (putStrLn . show) . zip [1..] . tail . concat $ sets
