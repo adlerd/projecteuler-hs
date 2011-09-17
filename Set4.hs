@@ -1,13 +1,13 @@
 module Set4 (set4) where
 
 import Atkin (primes)
-import Data.List (sort,permutations,insert)
+import Data.List (sort,permutations,insert,unfoldr)
 import EulerUtil (digits,undigits,iSqrt)
-import Sorted (elem,nub,difference)
+import Sorted (elem,nub,difference,intersection,mergeInfinite)
 import Input (input42)
 import Data.Array.Unboxed (listArray,UArray,(!))
 
-set4 = take 10 $ [euler40,euler41,euler42,euler43,euler44] ++ repeat undefined
+set4 = take 10 $ [euler40,euler41,euler42,euler43,euler44,euler45,euler46] ++ repeat undefined
 
 euler40 = show . product . map ((intsCat !!) . (10^)) $ [0..6]
     where
@@ -59,4 +59,16 @@ euler44 = show . head $ [d |
       isPentagonal n = case iSqrt (24*n+1) of
                          Just b -> b `rem` 6 == 5
                          Nothing -> False
-      pentagonals = scanl (+) 1 [4,7..]
+pentagonals = scanl (+) 1 [4,7..]
+triangles = scanl (+) 1 [2..]
+hexagonals = scanl (+) 1 [5,9..]
+
+euler45 = show . head . intersection h' . intersection p' $ t'
+    where
+      back = dropWhile (<= 40755)
+      p' = back pentagonals
+      t' = back triangles
+      h' = back hexagonals
+
+euler46 = show . head . flip Sorted.difference primes . Sorted.difference [3,5..]
+          . mergeInfinite . map (\p -> map ((p +) . (2 *) . (^ 2)) [0..]) $ primes

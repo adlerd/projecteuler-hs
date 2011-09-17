@@ -1,7 +1,10 @@
 module Sorted where
 
+import Data.List (unfoldr)
+import qualified PQ
+
 merge,union :: (Ord a) => [a] -> [a] -> [a]
-mergeMany,mergeManyStable :: (Ord a) => [[a]] -> [a]
+mergeMany,mergeManyStable,mergeInfinite :: (Ord a) => [[a]] -> [a]
 nub :: (Ord a) => [a] -> [a]
 
 merge [] yy = yy
@@ -32,12 +35,31 @@ mergeManyStable xs = head $ until single mm xs
       mm [z] = [z]
       mm (x:y:zs) = merge x y : mm zs
 
+mergeInfinite xs = unfoldr findDeleteMin (PQ.Empty, xs)
+    where
+      findDeleteMin :: (Ord a) => (PQ.Queue [a], [[a]]) -> Maybe (a, (PQ.Queue [a], [[a]]))
+      findDeleteMin (PQ.Empty, []) = Nothing
+      findDeleteMin (q, []:ffs) = findDeleteMin (q,ffs)
+      findDeleteMin (PQ.Empty, ff:ffs) = findDeleteMin (PQ.insert ff PQ.Empty, ffs)
+      findDeleteMin (q@(PQ.Queue [] _), fff) = findDeleteMin (PQ.deleteMin q, fff)
+      findDeleteMin (q@(PQ.Queue (qf:qfs) _), []) = Just (qf, (PQ.insert qfs . PQ.deleteMin $ q, []))
+      findDeleteMin (q@(PQ.Queue (qf:qfs) _), fff@((f:fs):ffs))
+          | f < qf = Just (f, (PQ.insert fs q, ffs))
+          | otherwise = Just (qf, (PQ.insert qfs . PQ.deleteMin $ q, fff))
+
 union [] yy = nub yy
 union xx [] = xx
 union xx@(x:xs) yy@(y:ys)
     | y < x = union (y:xx) ys
     | x < y = x : union xs yy
     | otherwise = union xx ys
+
+intersection [] _ = []
+intersection _ [] = []
+intersection xx@(x:xs) yy@(y:ys)
+    | y < x = intersection xx ys
+    | x < y = intersection xs yy
+    | x == y = x : intersection xs ys
 
 difference [] _ = []
 difference xx [] = xx
