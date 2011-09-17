@@ -1,13 +1,13 @@
 module Set4 (set4) where
 
 import Atkin (primes)
-import Data.List (sort,permutations,insert,unfoldr)
-import EulerUtil (digits,undigits,iSqrt)
-import Sorted (elem,nub,difference,intersection,mergeInfinite)
+import Data.List (sort,permutations,insert,unfoldr,groupBy)
+import EulerUtil (digits,undigits,iSqrt,factors,slide,rCombinations)
+import Sorted (elem,nub,difference,intersection,mergeInfinite,count)
 import Input (input42)
 import Data.Array.Unboxed (listArray,UArray,(!))
 
-set4 = take 10 $ [euler40,euler41,euler42,euler43,euler44,euler45,euler46] ++ repeat undefined
+set4 = [euler40,euler41,euler42,euler43,euler44,euler45,euler46,euler47,euler48,euler49]
 
 euler40 = show . product . map ((intsCat !!) . (10^)) $ [0..6]
     where
@@ -72,3 +72,16 @@ euler45 = show . head . intersection h' . intersection p' $ t'
 
 euler46 = show . head . flip Sorted.difference primes . Sorted.difference [3,5..]
           . mergeInfinite . map (\p -> map ((p +) . (2 *) . (^ 2)) [0..]) $ primes
+
+euler47 = show . fst . head . filter (and . snd) . zip [1..] . slide 4
+        . map ((> 3) . length . count . factors) $ [1..]
+
+euler48 = reverse . take 10 . reverse . show . sum . map (\x -> x^x) $ [1..1000]
+
+euler49 = head . filter (/= "148748178147") . map (concatMap show) . filter isArithSeq
+          . concatMap (rCombinations 3) . map (map snd)
+          . groupBy (\a b -> fst a == fst b) . sort
+          . map (\p -> (read . sort . show $ p :: Int, p))
+          . takeWhile (< 10000) . dropWhile (< 1000) $ primes
+    where
+      isArithSeq [a,b,c] = c == b + (b - a)

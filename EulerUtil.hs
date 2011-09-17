@@ -56,3 +56,7 @@ selectAntiSelect xs = zip xs . zipWith (++) (inits xs) . tail . tails $ xs
 isPalindrome xs = take n xs == take n (reverse xs)
     where
       n = length xs `quot` 2
+
+rCombinations 1 xs = map (:[]) xs
+rCombinations r xs = concatMap (\t -> map ((head t) :) . rCombinations (r-1) . tail $ t)
+                     . allBut 1 . tails $ xs
