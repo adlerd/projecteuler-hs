@@ -6,7 +6,7 @@ import Data.List (sortBy,tails,unfoldr,foldl',groupBy,sort)
 import Data.Ord (comparing)
 import EulerUtil (digits)
 
-set5 = take 10 $ [euler50,euler51] ++ repeat undefined
+set5 = take 10 $ [euler50,euler51,euler52,euler53] ++ repeat undefined
 
 euler50 = show . fst . head . filter (flip Sorted.elem primes . fst)
           . sortBy (flip $ comparing snd) . takeWhile ((< 1000000) . fst)
@@ -41,3 +41,13 @@ euler51 = show . head . concatMap selByG8 . bylog10 $ primes
             b10 r d = r*10+d
             b2 True r = r*2+1
             b2 False r = r*2
+
+euler52 = show . head . filter satisfies $ [1..]
+    where
+      satisfies x = all ((ds==) . sort . digits . (x*)) [2..6]
+          where
+            ds = sort . digits $ x
+euler53 = show . length . filter (> 1000000) . concat . take 100 . tail $ pascal
+    where
+      pascal = map (takeWhile (>0)) . iterate (\xs -> zipWith (+) xs $ 0:xs)
+               $ 1 : repeat 0
