@@ -6,14 +6,17 @@ import Sorted (count, uncount)
 import Data.Char (digitToInt,intToDigit)
 
 factors x
-    | x > 0 = factors' primes x
+    | x > 0 = factors' primes x . sqrt . fromIntegral $ x
     where
-      factors' _ 1 = []
-      factors' pp@(p:ps) x
-          | m == 0 = p : factors' pp d
-          | otherwise = factors' ps x
+      factors' _ 1 _ = []
+      factors' pp@(p:ps) x qr
+          | fromIntegral p > qr = [x]
+          | m == 0 = p : (factors' pp d . sqrt . fromIntegral $ d)
+          | otherwise = factors' ps x qr
           where
             (d,m) = x `quotRem` p
+
+isPrime x = [x] == factors x
 
 by :: (a -> a -> b) -> (c -> a) -> (c -> c -> b)
 by d m x y = (m x) `d` (m y)

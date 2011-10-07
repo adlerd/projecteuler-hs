@@ -5,7 +5,7 @@ import Sorted (elem,mergeInfinite,nub,mapElem)
 import Atkin (primes)
 import Data.List (sortBy,tails,unfoldr,foldl',groupBy,sort)
 import Data.Ord (comparing)
-import EulerUtil (digits,slide,isPalindrome,undigits)
+import EulerUtil (digits,slide,isPalindrome,undigits,isPrime)
 import Data.Maybe (mapMaybe,listToMaybe,catMaybes)
 import Data.Char (digitToInt,chr)
 import Data.Ratio
@@ -133,8 +133,7 @@ euler58 = show . (\(_,_,n,_) -> 2*n+1) . head . dropWhile (\(r,_,_,_) -> r >= 1%
           . iterate step $ (1%1,0,0,diagPrimes)
     where
       diags = concat [[x,x+2*n,x+4*n]| n <- [1..], let x = 1+2*n*(2*n-1)]
-      diagPrimes = filter primeTest diags
-      primeTest n = not . any ((0==) . mod n) . takeWhile ((<n) . (^2)) $ primes
+      diagPrimes = filter isPrime diags
       step (_,pCt,nPrev,dps) = (pCt'%totalCt,pCt',n,dps2)
           where
             n = nPrev + 1
