@@ -1,16 +1,17 @@
 module Set5 (set5) where
 
-import Input (input54)
-import Sorted (elem,mergeInfinite,nub)
+import Input (input54,input59)
+import Sorted (elem,mergeInfinite,nub,mapElem)
 import Atkin (primes)
 import Data.List (sortBy,tails,unfoldr,foldl',groupBy,sort)
 import Data.Ord (comparing)
 import EulerUtil (digits,slide,isPalindrome,undigits)
 import Data.Maybe (mapMaybe,listToMaybe,catMaybes)
-import Data.Char (digitToInt)
+import Data.Char (digitToInt,chr)
 import Data.Ratio
+import Data.Bits (xor)
 
-set5 = take 10 $ [euler50,euler51,euler52,euler53,euler54,euler55,euler56,euler57] ++ repeat undefined
+set5 = [euler50,euler51,euler52,euler53,euler54,euler55,euler56,euler57,euler58,euler59]
 
 euler50 = show . fst . head . filter (flip Sorted.elem primes . fst)
           . sortBy (flip $ comparing snd) . takeWhile ((< 1000000) . fst)
@@ -127,3 +128,24 @@ euler57 = show . length . filter satisfies . take 1000 . iterate step $ 3%2
           where
             n = numerator r
             d = denominator r
+
+euler58 = show . (\(_,_,n,_) -> 2*n+1) . head . dropWhile (\(r,_,_,_) -> r >= 1%10)
+          . iterate step $ (1%1,0,0,diagPrimes)
+    where
+      diags = concat [[x,x+2*n,x+4*n]| n <- [1..], let x = 1+2*n*(2*n-1)]
+      diagPrimes = filter primeTest diags
+      primeTest n = not . any ((0==) . mod n) . takeWhile ((<n) . (^2)) $ primes
+      step (_,pCt,nPrev,dps) = (pCt'%totalCt,pCt',n,dps2)
+          where
+            n = nPrev + 1
+            totalCt = 4*n+1
+            (dps1,dps2) = span (< (2*n+1)^2) dps
+            pCt' = pCt + length dps1
+
+euler59 = show . sum . head . filter (\t -> all (`Prelude.elem` (asciiWords t)) common)
+          . map (decrypt input59)
+          $ [[a,b,c] | a <- [97..122], b <- [97..122], c <- [97..122]]
+    where
+      decrypt ct pw = zipWith xor ct $ cycle pw
+      asciiWords = words . map chr
+      common = ["the","and","that"]
