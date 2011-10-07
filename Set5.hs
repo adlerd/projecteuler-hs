@@ -5,11 +5,12 @@ import Sorted (elem,mergeInfinite,nub)
 import Atkin (primes)
 import Data.List (sortBy,tails,unfoldr,foldl',groupBy,sort)
 import Data.Ord (comparing)
-import EulerUtil (digits,slide)
+import EulerUtil (digits,slide,isPalindrome,undigits)
 import Data.Maybe (mapMaybe,listToMaybe,catMaybes)
 import Data.Char (digitToInt)
+import Data.Ratio
 
-set5 = take 10 $ [euler50,euler51,euler52,euler53,euler54] ++ repeat undefined
+set5 = take 10 $ [euler50,euler51,euler52,euler53,euler54,euler55,euler56,euler57] ++ repeat undefined
 
 euler50 = show . fst . head . filter (flip Sorted.elem primes . fst)
           . sortBy (flip $ comparing snd) . takeWhile ((< 1000000) . fst)
@@ -107,3 +108,22 @@ euler54 = show . length . filter (winOne . splitAt 5 . map readcard) . takeWhile
                                            'K' -> 13
                                            'A' -> 14
                                            otherwise -> digitToInt v
+
+euler55 = show . length . filter lychrel $ [1..9999]
+    where
+      lychrel = ([] ==) . filter (isPalindrome . show) . take 50 . tail . iterate step
+      step x = x + (undigits . reverse . digits $ x)
+
+euler56 = show . maximum . map (sum . digits) $ [a^b | a <- [1..100], b <- [1..100]]
+
+euler57 = show . length . filter satisfies . take 1000 . iterate step $ 3%2
+    where
+      step r = (nd+d)%(nd)
+          where
+            nd = n + d
+            n = numerator r
+            d = denominator r
+      satisfies r = (length . digits $ n) > (length . digits $ d)
+          where
+            n = numerator r
+            d = denominator r
