@@ -5,7 +5,7 @@ import Sorted (elem,mergeInfinite,nub,mapElem)
 import Atkin (primes)
 import Data.List (sortBy,tails,unfoldr,foldl',groupBy,sort)
 import Data.Ord (comparing)
-import EulerUtil (digits,slide,isPalindrome,undigits,isPrime)
+import EulerUtil (digits,slide,isPalindrome,undigits,undigits',isPrime)
 import Data.Maybe (mapMaybe,listToMaybe,catMaybes)
 import Data.Char (digitToInt,chr)
 import Data.Ratio
@@ -113,7 +113,7 @@ euler54 = show . length . filter (winOne . splitAt 5 . map readcard) . takeWhile
 euler55 = show . length . filter lychrel $ [1..9999]
     where
       lychrel = ([] ==) . filter (isPalindrome . show) . take 50 . tail . iterate step
-      step x = x + (undigits . reverse . digits $ x)
+      step x = x + (undigits' . reverse . digits $ x)
 
 euler56 = show . maximum . map (sum . digits) $ [a^b | a <- [1..100], b <- [1..100]]
 
