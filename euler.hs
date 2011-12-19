@@ -7,6 +7,7 @@ import Set3
 import Set4
 import Set5
 
+lastProblem = 59
 sets = [set0, set1,set2,set3,set4,set5]
 
 driver input = (sets !! s) !! p
@@ -16,7 +17,7 @@ driver input = (sets !! s) !! p
 main = do tmp <- getLine
           if tmp == "q"
           then return ()
-          else do putStrLn ('>' : driver tmp)
-                  main          
-
---main = mapM_ (putStrLn . show) . zip [1..] . tail . concat $ sets
+          else do if tmp == "check"
+	          then mapM_ (putStrLn . show) . zip [1..lastProblem] . tail . concat $ sets
+	          else putStrLn ('>' : driver tmp)
+                  main
