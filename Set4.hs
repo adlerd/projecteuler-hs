@@ -1,7 +1,7 @@
 module Set4 (set4) where
 
 import Atkin (primes)
-import Data.List (sort,permutations,insert,unfoldr,groupBy)
+import Data.List (sort,insert,unfoldr,groupBy)
 import EulerUtil (digits,undigits,iSqrt,factors,slide,rCombinations)
 import Sorted (elem,nub,difference,intersection,mergeInfinite,count)
 import Input (input42)
