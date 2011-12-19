@@ -6,9 +6,10 @@ import Set2
 import Set3
 import Set4
 import Set5
+import Set6
 
-lastProblem = 59
-sets = [set0, set1,set2,set3,set4,set5]
+lastProblem = 60
+sets = [set0,set1,set2,set3,set4,set5,set6]
 
 driver input = (sets !! s) !! p
     where
