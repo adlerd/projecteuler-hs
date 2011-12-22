@@ -2,10 +2,12 @@ module Set6 (set6) where
 
 import EulerUtil (digits,undigits,isPrime,lengthInRange)
 import Atkin (primes)
-import Data.List (tails,permutations,unfoldr,sort,groupBy,sortBy)
+import Data.List (tails,permutations,unfoldr,sort,groupBy,sortBy,elemIndex,findIndex,
+                  find,maximumBy)
 import Data.Ord (comparing)
+import Data.Maybe (fromJust,mapMaybe)
 
-set6 = take 10 $ [euler60,euler61,euler62,euler63] ++ repeat undefined
+set6 = take 10 $ [euler60,euler61,euler62,euler63,euler64,euler65,euler66] ++ repeat undefined
 
 euler60 = show . head $ do (a:as) <- tails primes'
                            let a' = filter (goodpair a) as
@@ -54,3 +56,45 @@ euler63 = show . length . concat . takeWhile (not . null)
           . map nthPow $ [1..]
     where
       nthPow n = (n, map (^n) [1..9])
+
+floorSqrt n = fromIntegral . fromJust . findIndex (> n) . map (\n -> n * n) $ [1..]
+
+findExpansionTerms sq
+    | flsq * flsq == sq = []
+    | otherwise = iterate (fet flsq) (0,1,flsq)
+    where
+      fet a0 (m,d,a) = (m1,d1,a1)
+          where
+            m1 = d*a-m
+            d1 = (sq-m1^2) `div` d
+            a1 = (a0+m1) `div` d1
+      flsq = floorSqrt sq
+
+contFracConv as = (aa as,bb as)
+    where
+      rel = zipWith3 (\l1 l2 bn -> bn * l1 + l2)
+      aa b = drop 2 aa'
+          where
+            aa' = 0 : 1 : rel (tail aa') aa' as
+      bb b = drop 2 bb'
+          where
+            bb' = 1 : 0 : rel (tail bb') bb' as
+
+euler64 = show . length . filter odd . map period $ [1..10000]
+    where
+      period n = case findExpansionTerms n of
+                   [] -> 0
+                   (_:f:rest) -> (1 +) . fromJust . elemIndex f $ rest
+
+euler65 = show . sum . digits . (!! 99) . fst . contFracConv
+          $ 2 : concatMap (\n -> [1,2*n,1]) [1..]
+
+euler66 = show . fst . maximumBy (comparing snd) . mapMaybe minX $ [2..1000]
+    where
+      minX :: Integer -> Maybe (Integer, Integer)
+      minX d = do et <- if null expTerms then Nothing else Just expTerms
+                  s <- find solves . uncurry zip . contFracConv $ et
+                  return $ (d, fst s)
+          where
+            expTerms = map (\(_,_,a) -> a) . findExpansionTerms $ d
+            solves (h,k) = h^2 - d*k^2 == 1
