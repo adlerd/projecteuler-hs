@@ -1,10 +1,11 @@
 module Set6 (set6) where
 
-import EulerUtil (digits,undigits,isPrime)
+import EulerUtil (digits,undigits,isPrime,lengthInRange)
 import Atkin (primes)
-import Data.List (tails,permutations)
+import Data.List (tails,permutations,unfoldr,sort,groupBy,sortBy)
+import Data.Ord (comparing)
 
-set6 = take 10 $ [euler60,euler61] ++ repeat undefined
+set6 = take 10 $ [euler60,euler61,euler62] ++ repeat undefined
 
 euler60 = show . head $ do (a:as) <- tails primes'
                            let a' = filter (goodpair a) as
@@ -38,3 +39,12 @@ euler61 = head $
              else fail ""
     where
       links p = ((== (p `mod` 100)) . (`div` 100))
+
+euler62 = show . fst . head . head . filter (lengthInRange 5 5)
+          . concatMap (groupBy sndEq . sortBy (comparing snd)
+                       . map (\x -> (x, sort . digits $ x))) $ cubesByLen
+    where
+      sndEq (_,a) (_,b) = a == b
+      cubesByLen = unfoldr (\(lim, xs) -> Just . (\(a,b) -> (a,(10*lim,b)))
+                                          . span (< lim) $ xs)
+                   (10, map (^3) [1..])

@@ -65,3 +65,11 @@ isPalindrome xs = take n xs == take n (reverse xs)
 rCombinations 1 xs = map (:[]) xs
 rCombinations r xs = concatMap (\t -> map ((head t) :) . rCombinations (r-1) . tail $ t)
                      . allBut 1 . tails $ xs
+
+lengthInRange l u xs 
+    | l < 0 || u < l = undefined
+    | l == 0 = (drop u xs) == []
+    | otherwise = firstD /= [] && secD == []
+    where
+      firstD = drop (l - 1) xs
+      secD = drop (u - l + 1) firstD
