@@ -5,7 +5,7 @@ import Atkin (primes)
 import Data.List (tails,permutations,unfoldr,sort,groupBy,sortBy)
 import Data.Ord (comparing)
 
-set6 = take 10 $ [euler60,euler61,euler62] ++ repeat undefined
+set6 = take 10 $ [euler60,euler61,euler62,euler63] ++ repeat undefined
 
 euler60 = show . head $ do (a:as) <- tails primes'
                            let a' = filter (goodpair a) as
@@ -48,3 +48,9 @@ euler62 = show . fst . head . head . filter (lengthInRange 5 5)
       cubesByLen = unfoldr (\(lim, xs) -> Just . (\(a,b) -> (a,(10*lim,b)))
                                           . span (< lim) $ xs)
                    (10, map (^3) [1..])
+
+euler63 = show . length . concat . takeWhile (not . null)
+          . map (\(n,ps) -> dropWhile (< 10^(n-1)) . takeWhile (< 10^n) $ ps)
+          . map nthPow $ [1..]
+    where
+      nthPow n = (n, map (^n) [1..9])
