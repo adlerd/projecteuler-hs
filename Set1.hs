@@ -1,4 +1,4 @@
-module Set1 (set1) where
+module Set1 (set1,reduceTri) where
 
 import Atkin (primes)
 import EulerUtil (slide,divisorCount)

@@ -6,8 +6,10 @@ import Data.List (tails,permutations,unfoldr,sort,groupBy,sortBy,elemIndex,findI
                   find,maximumBy)
 import Data.Ord (comparing)
 import Data.Maybe (fromJust,mapMaybe)
+import Set1 (reduceTri)
+import Input (input67)
 
-set6 = take 10 $ [euler60,euler61,euler62,euler63,euler64,euler65,euler66] ++ repeat undefined
+set6 = take 10 $ [euler60,euler61,euler62,euler63,euler64,euler65,euler66,euler67] ++ repeat undefined
 
 euler60 = show . head $ do (a:as) <- tails primes'
                            let a' = filter (goodpair a) as
@@ -98,3 +100,5 @@ euler66 = show . fst . maximumBy (comparing snd) . mapMaybe minX $ [2..1000]
           where
             expTerms = map (\(_,_,a) -> a) . findExpansionTerms $ d
             solves (h,k) = h^2 - d*k^2 == 1
+
+euler67 = show . reduceTri $ input67
