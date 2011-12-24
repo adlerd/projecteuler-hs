@@ -3,13 +3,14 @@ module Set6 (set6) where
 import EulerUtil (digits,undigits,isPrime,lengthInRange)
 import Atkin (primes)
 import Data.List (tails,permutations,unfoldr,sort,groupBy,sortBy,elemIndex,findIndex,
-                  find,maximumBy)
+                  find,maximumBy,minimumBy)
 import Data.Ord (comparing)
 import Data.Maybe (fromJust,mapMaybe)
 import Set1 (reduceTri)
 import Input (input67)
+import Sorted (count)
 
-set6 = take 10 $ [euler60,euler61,euler62,euler63,euler64,euler65,euler66,euler67] ++ repeat undefined
+set6 = take 10 $ [euler60,euler61,euler62,euler63,euler64,euler65,euler66,euler67,euler68] ++ repeat undefined
 
 euler60 = show . head $ do (a:as) <- tails primes'
                            let a' = filter (goodpair a) as
@@ -102,3 +103,30 @@ euler66 = show . fst . maximumBy (comparing snd) . mapMaybe minX $ [2..1000]
             solves (h,k) = h^2 - d*k^2 == 1
 
 euler67 = show . reduceTri $ input67
+
+choose n xs
+    | len < n = undefined
+    | otherwise = choose' n xs (length xs)
+    where
+      len = (length xs)
+      choose' 0 _ _ = [[]]
+      choose' n xs len = concatMap (\(len',y:ys) -> map (y:) (choose' (n-1) ys len')) .
+                         zip [len-1,len-2..] . take (len - n + 1) . tails $ xs
+
+euler68 = show . maximum . mapMaybe solves . concatMap permutations . choose 6 $ [1..10]
+    where
+      solves :: [Int] -> Maybe Int
+      solves xs@[a,b,d,f,h,j]
+          | sixteen && proper = Just . read . concat . map show $ std
+          | otherwise = Nothing
+          where
+            sixteen = not . elem 10 $ [b,d,f,h,j]
+            proper = sort [a,b,c,d,e,f,g,h,i,j] == [1..10]
+            tot = a + b + d
+            c = tot - d - f
+            e = tot - f - h
+            g = tot - h - j
+            i = tot - j - b
+            std = concat . minimumBy (comparing $ head . head) . take 5 . map (take 5)
+                  . tails . cycle
+                  $ [[a,b,d],[c,d,f],[e,f,h],[g,h,j],[i,j,b]]
