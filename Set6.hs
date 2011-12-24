@@ -1,6 +1,6 @@
 module Set6 (set6) where
 
-import EulerUtil (digits,undigits,isPrime,lengthInRange)
+import EulerUtil (digits,undigits,isPrime,lengthInRange,totient)
 import Atkin (primes)
 import Data.List (tails,permutations,unfoldr,sort,groupBy,sortBy,elemIndex,findIndex,
                   find,maximumBy,minimumBy)
@@ -10,7 +10,7 @@ import Set1 (reduceTri)
 import Input (input67)
 import Sorted (count)
 
-set6 = take 10 $ [euler60,euler61,euler62,euler63,euler64,euler65,euler66,euler67,euler68] ++ repeat undefined
+set6 = [euler60,euler61,euler62,euler63,euler64,euler65,euler66,euler67,euler68,euler69]
 
 euler60 = show . head $ do (a:as) <- tails primes'
                            let a' = filter (goodpair a) as
@@ -130,3 +130,6 @@ euler68 = show . maximum . mapMaybe solves . concatMap permutations . choose 6 $
             std = concat . minimumBy (comparing $ head . head) . take 5 . map (take 5)
                   . tails . cycle
                   $ [[a,b,d],[c,d,f],[e,f,h],[g,h,j],[i,j,b]]
+
+euler69 = show . fst . maximumBy (comparing snd)
+          . map (\x -> (x, fromIntegral x / (fromIntegral $ totient x))) $ [1..1000000]

@@ -73,3 +73,5 @@ lengthInRange l u xs
     where
       firstD = drop (l - 1) xs
       secD = drop (u - l + 1) firstD
+
+totient = product . map (\(p,x) -> (p-1)*p^(x-1)) . count . factors
