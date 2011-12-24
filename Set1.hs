@@ -65,7 +65,6 @@ euler17 = show
           + (length "hundred") * 900
           + (length "and") * (900 - 9)
           + (length "onethousand")
-          
     where
       ten = sum . map length
             $ ["","one","two","three","four","five","six","seven","eight","nine"]

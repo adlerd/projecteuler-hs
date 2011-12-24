@@ -14,14 +14,14 @@ set6 = take 10 $ [euler60,euler61,euler62,euler63,euler64,euler65,euler66,euler6
 
 euler60 = show . head $ do (a:as) <- tails primes'
                            let a' = filter (goodpair a) as
-                    	   (b:bs) <- tails a'
-                    	   let b' = filter (goodpair b) bs
-                    	   (c:cs) <- tails b'
-                    	   let c' = filter (goodpair c) cs
-                    	   (d:ds) <- tails c'
-                    	   let d' = filter (goodpair d) ds
-                    	   e <- d'
-                    	   return (sum [a,b,c,d,e])
+                           (b:bs) <- tails a'
+                           let b' = filter (goodpair b) bs
+                           (c:cs) <- tails b'
+                           let c' = filter (goodpair c) cs
+                           (d:ds) <- tails c'
+                           let d' = filter (goodpair d) ds
+                           e <- d'
+                           return (sum [a,b,c,d,e])
     where
       goodpair x y = x /= y && isP xd yd && isP yd xd
           where

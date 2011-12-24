@@ -79,7 +79,7 @@ deleteMin (Queue _ f) = Queue next nextForest
     where
       ((Node next _ rest), restForest) = remMinBy (comparing elt) f
       (rank0s, rankPs) = revPart [] [] rest
-          where 
+          where
             revPart r0s rPs [] = (r0s,rPs)
             revPart r0s rPs (c@(Node _ r _):cs)
                 | r == 0 = revPart (c:r0s) rPs cs

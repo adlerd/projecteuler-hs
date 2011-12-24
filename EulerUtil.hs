@@ -38,7 +38,7 @@ divisorCount n
 
 divisorFun 0 = divisorCount
 divisorFun 1 = sum . divisors
-divisorFun n = sum . map (^ n) . divisors 
+divisorFun n = sum . map (^ n) . divisors
 
 divisors n = map (product . uncount . zip pfs) . enumerateMCs $ fcs
     where
@@ -66,7 +66,7 @@ rCombinations 1 xs = map (:[]) xs
 rCombinations r xs = concatMap (\t -> map ((head t) :) . rCombinations (r-1) . tail $ t)
                      . allBut 1 . tails $ xs
 
-lengthInRange l u xs 
+lengthInRange l u xs
     | l < 0 || u < l = undefined
     | l == 0 = (drop u xs) == []
     | otherwise = firstD /= [] && secD == []
