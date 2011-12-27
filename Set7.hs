@@ -6,7 +6,7 @@ import Data.Ord (comparing)
 import Data.Maybe (fromJust, mapMaybe)
 import Data.Ratio ((%))
 
-set7 = take 10 $ [euler70,euler71] ++ repeat undefined
+set7 = take 10 $ [euler70,euler71,euler72] ++ repeat undefined
 
 euler70 = show . fst . fromJust $ foldl' fold Nothing [2..9999999]
     where
@@ -31,3 +31,5 @@ euler71 = show . fst . last . takeWhile ((<= 1000000) . snd) . iterate closer $ 
             maybeLast [] = Nothing
             maybeLast xs = Just $ last xs
             gcdone = (1 ==) . gcd d
+
+euler72 = show . sum . map totient $ [2..1000000]
