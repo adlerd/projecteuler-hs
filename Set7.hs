@@ -1,12 +1,13 @@
 module Set7 (set7) where
 
+import Sorted (mergeMany)
 import Data.List (minimumBy,sort,foldl')
 import EulerUtil (totient,digits)
 import Data.Ord (comparing)
 import Data.Maybe (fromJust, mapMaybe)
-import Data.Ratio ((%))
+import Data.Ratio ((%),denominator)
 
-set7 = take 10 $ [euler70,euler71,euler72] ++ repeat undefined
+set7 = take 10 $ [euler70,euler71,euler72,euler73] ++ repeat undefined
 
 euler70 = show . fst . fromJust $ foldl' fold Nothing [2..9999999]
     where
@@ -33,3 +34,7 @@ euler71 = show . fst . last . takeWhile ((<= 1000000) . snd) . iterate closer $ 
             gcdone = (1 ==) . gcd d
 
 euler72 = show . sum . map totient $ [2..1000000]
+
+euler73 = show  . sum . map (\d -> length . filter ((d==) . denominator)
+                                   . takeWhile (< 1%2) . dropWhile (<= 1%3)
+                                   . map (%d) $ [1..d]) $ [5..12000]
