@@ -1,14 +1,14 @@
 module Set7 (set7) where
 
-import Sorted (mergeMany)
-import Data.List (minimumBy,sort,foldl')
-import EulerUtil (totient,digits)
+import Sorted (mergeMany,mergeInfinite)
+import Data.List (minimumBy,sort,foldl',nub,groupBy)
+import EulerUtil (totient,digits,lengthInRange)
 import Data.Ord (comparing)
 import Data.Maybe (fromJust, mapMaybe)
 import Data.Ratio ((%),denominator)
 import qualified Data.MemoCombinators as MC
 
-set7 = take 10 $ [euler70,euler71,euler72,euler73,euler74] ++ repeat undefined
+set7 = take 10 $ [euler70,euler71,euler72,euler73,euler74,euler75] ++ repeat undefined
 
 euler70 = show . fst . fromJust $ foldl' fold Nothing [2..9999999]
     where
@@ -56,3 +56,21 @@ euler74 = show . length . filter ((== 60) . chainLen') $ [1..999999]
           where
             fdsum = sum . map fact . digits $ x
       chainLen' = MC.arrayRange (1,999999) (chainLen chainLen')
+
+euler75 = show . length . filter (lengthInRange 1 1 . nub . map snd)
+          . groupBy (\a b -> fst a == fst b) . map (\(s,abc) -> (s`div`2,abc))
+          . takeWhile ((<= 1500000) . fst) . mergeInfinite . map gtsM $ [1..]
+    where
+      genTrip mSq mDb n = (a'+b'+c,(a,b,c))
+          where
+            a' = mSq - n^2
+            b' = mDb*n
+            c = mSq + n^2
+            (a,b) = if a' > b' then (b',a') else (a',b')
+      gtsM m = mergeInfinite
+               . map (flip map [1..] . mult . genTrip sq db)
+               . filter ((1 ==) . gcd m) $ [1..m-1]
+          where
+            sq = m * m
+            db = m + m
+            mult (s,(a,b,c)) k = (s*k,(a*k,b*k,c*k))
