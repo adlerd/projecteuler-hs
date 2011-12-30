@@ -8,7 +8,7 @@ import Data.Maybe (fromJust, mapMaybe)
 import Data.Ratio ((%),denominator)
 import qualified Data.MemoCombinators as MC
 
-set7 = take 10 $ [euler70,euler71,euler72,euler73,euler74,euler75] ++ repeat undefined
+set7 = take 10 $ [euler70,euler71,euler72,euler73,euler74,euler75,euler76] ++ repeat undefined
 
 euler70 = show . fst . fromJust $ foldl' fold Nothing [2..9999999]
     where
@@ -74,3 +74,11 @@ euler75 = show . length . filter (lengthInRange 1 1 . nub . map snd)
             sq = m * m
             db = m + m
             mult (s,(a,b,c)) k = (s*k,(a*k,b*k,c*k))
+
+euler76 = show . subtract 1 $ parts' 100 1
+    where
+      parts f n k
+            | k > n = 0
+            | k == n = 1
+            | otherwise = (f n $ k+1) + (f (n-k) k)
+      parts' = MC.memo2 (MC.arrayRange (1,100)) MC.integral (parts parts')
