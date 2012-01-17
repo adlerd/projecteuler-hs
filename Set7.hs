@@ -2,13 +2,13 @@ module Set7 (set7) where
 
 import Sorted (mergeMany,mergeInfinite)
 import Data.List (minimumBy,sort,foldl',nub,groupBy)
-import EulerUtil (totient,digits,lengthInRange)
+import EulerUtil (totient,digits,lengthInRange,isPrime)
 import Data.Ord (comparing)
 import Data.Maybe (fromJust, mapMaybe)
 import Data.Ratio ((%),denominator)
 import qualified Data.MemoCombinators as MC
 
-set7 = take 10 $ [euler70,euler71,euler72,euler73,euler74,euler75,euler76] ++ repeat undefined
+set7 = take 10 $ [euler70,euler71,euler72,euler73,euler74,euler75,euler76,euler77,euler78] ++ repeat undefined
 
 euler70 = show . fst . fromJust $ foldl' fold Nothing [2..9999999]
     where
@@ -82,3 +82,29 @@ euler76 = show . subtract 1 $ parts' 100 1
             | k == n = 1
             | otherwise = (f n $ k+1) + (f (n-k) k)
       parts' = MC.memo2 (MC.arrayRange (1,100)) MC.integral (parts parts')
+
+euler77 = show . fst . head . dropWhile ((<= 5000) . snd) . map (\n -> (n, parts' n 1))
+          $ [1..]
+    where
+      parts f n k
+          | k > n = 0
+          | k == n = if isPrime n then 1 else 0
+          | otherwise = (f n $ k+1) + if isPrime k then (f (n-k) k) else 0
+      parts' = MC.memo2 (MC.arrayRange (1,200)) MC.integral (parts parts')
+
+euler78 = show . fst . head . dropWhile ((/= 0) . (`mod` 1000000) . snd)
+            . map (\n -> (n, parts' n)) $ [1..]
+    where
+      parts :: (Int -> Integer) -> Int -> Integer
+      parts _ 0 = 1
+      parts f n = foldl sumMod 0 . zipWith (*) pairsTimes . map f
+                  . takeWhile (>= 0) . map (n -) $ genPent
+      parts' = MC.chunks MC.arrayRange (next 0) (parts parts')
+          where
+            step = 10000
+            next st = (st, st+step) : next (st + step + 1)
+      sumMod :: Integer -> Integer -> Integer
+      sumMod a b = if (abs ans) > 10000000 then ans `mod` 1000000 else ans
+          where ans = a + b
+      genPent = concatMap (\k -> [k*(3*k-1)`quot`2,k*(3*k+1)`quot`2]) $ [1..]
+      pairsTimes = 1 : 1 : -1 : -1 : pairsTimes
