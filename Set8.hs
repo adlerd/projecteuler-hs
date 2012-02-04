@@ -1,9 +1,11 @@
 module Set8 (set8) where
 
-import Data.List (mapAccumL)
+import Data.List (mapAccumL,transpose)
 import EulerUtil (digits)
+import Data.Maybe (fromJust)
+import Input (input81)
 
-set8 = take 10 $ [euler80] ++ repeat undefined
+set8 = take 10 $ [euler80, euler81, euler82] ++ repeat undefined
 
 euler80 = show . sum . concat . filter (\(_:xs) -> xs /= replicate 99 0)
           . map sqrtDigs $ [1..99]
@@ -23,3 +25,25 @@ euler80 = show . sum . concat . filter (\(_:xs) -> xs /= replicate 99 0)
       byTwo xs = if even (length xs) then byTwo' xs else byTwo' (0:xs)
       byTwo' [] = []
       byTwo' (a:b:xs) = (a,b) : byTwo xs
+
+makeRows n xs = takeWhile ([] /=) . tail . map fst . iterate (splitAt n . snd) $ ([], xs)
+
+aRow mLeft (mUp,this) = Just $ this + mMin mUp mLeft
+mMin Nothing (Just x) = x
+mMin (Just x) Nothing = x
+mMin Nothing Nothing = 0
+mMin (Just x) (Just y) = min x y
+
+euler81 = show . fromJust . last . foldl nextRow (repeat Nothing)
+          . makeRows 80 $ (map fromIntegral input81 :: [Integer])
+    where
+      nextRow prev current = tail . scanl aRow Nothing $ zip prev current
+
+euler82 = show . foldl1 min . last . scanl1 nextRow
+          . transpose . makeRows 80 $ (map fromIntegral input81 :: [Integer])
+    where
+      nextRow prev current = zipWith mMin
+                             (tail $ scanl aRow Nothing pc)
+                             (init $ scanr (flip aRow) Nothing pc)
+          where
+            pc = zip (map Just prev) current
