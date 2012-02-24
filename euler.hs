@@ -10,7 +10,7 @@ import Set6 (set6)
 import Set7 (set7)
 import Set8 (set8)
 
-lastProblem = 82
+lastProblem = 83
 sets = [set0,set1,set2,set3,set4,set5,set6,set7,set8]
 
 driver input = (sets !! s) !! p

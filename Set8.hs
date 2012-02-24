@@ -2,10 +2,13 @@ module Set8 (set8) where
 
 import Data.List (mapAccumL,transpose)
 import EulerUtil (digits)
-import Data.Maybe (fromJust)
+import Data.Maybe (fromJust,mapMaybe)
 import Input (input81)
+import qualified PQ
+import Data.Array (bounds, (!), (//), Array, listArray)
+import Data.Ix (inRange)
 
-set8 = take 10 $ [euler80, euler81, euler82] ++ repeat undefined
+set8 = take 10 $ [euler80, euler81, euler82, euler83] ++ repeat undefined
 
 euler80 = show . sum . concat . filter (\(_:xs) -> xs /= replicate 99 0)
           . map sqrtDigs $ [1..99]
@@ -47,3 +50,35 @@ euler82 = show . foldl1 min . last . scanl1 nextRow
                              (init $ scanr (flip aRow) Nothing pc)
           where
             pc = zip (map Just prev) current
+
+-- problem 83: Dijkstra's algorihm
+data DState = DState { source :: Array (Int, Int) (Maybe Int)
+                     , unvisited :: PQ.Queue (Int, (Int, Int)) }
+             | DDone Int
+
+dijStep :: DState -> DState
+dijStep (DDone i) = DDone i
+dijStep (DState src ud)
+    | nextPlace == snd arrBounds = DDone nextVal
+    | alreadyVisited =  DState src newpq --ignore repeated entry
+    | otherwise = DState (src // [(nextPlace, Nothing)]) --mark visited
+                  . foldr PQ.insert newpq $ neighbors -- add tentative values
+    where
+      arrBounds = bounds src
+      alreadyVisited = Nothing == src ! nextPlace
+      (nextVal, nextPlace@(npx,npy)) = PQ.findMin ud
+      newpq = PQ.deleteMin ud
+      tentative xy = do if (inRange arrBounds xy) then Just () else Nothing
+                        srcVal <- src ! xy
+                        return (nextVal + srcVal, xy)
+      neighbors = mapMaybe tentative
+                  $ [(npx,npy+1),(npx,npy-1),(npx+1,npy),(npx-1,npy)]
+
+euler83 = show . head . mapMaybe stateToMaybe . iterate dijStep $ start
+    where
+      input :: Array (Int, Int) (Maybe Int)
+      input = (listArray ((1,1),(80,80)) . map Just $  input81)
+      stateToMaybe (DDone i) = Just i
+      stateToMaybe _ = Nothing
+      start = DState input (PQ.insert (fromJust $ input ! st, st) PQ.Empty)
+      st = fst . bounds $ input
