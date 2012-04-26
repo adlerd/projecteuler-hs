@@ -49,7 +49,7 @@ fibonacci = fib 1 1
     where
       fib a b = a : fib b (b+a)
 
-digits :: (Integral a) => a -> [Int]
+digits :: (Integral a, Show a) => a -> [Int]
 digits = map digitToInt . show
 undigits :: [Int] -> Int
 undigits = foldl' (\a b -> a*10+b) 0

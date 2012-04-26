@@ -5,11 +5,11 @@ module PQ
 import Data.List (minimumBy,partition,unfoldr)
 import Data.Ord (comparing)
 
-data (Ord a) => Node a = Node { elt::a, rank::Int, children::[Node a] }
-                         deriving Show
+data Node a = Node { elt::a, rank::Int, children::[Node a] }
+              deriving Show
 type Forest a = [Node a]
-data (Ord a) => Queue a = Empty | Queue { root::a, forest::(Forest a) }
-                          deriving Show
+data Queue a = Empty | Queue { root::a, forest::(Forest a) }
+               deriving Show
 
 findMin :: (Ord a) => Queue a -> a
 findMin = root
