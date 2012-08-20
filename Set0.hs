@@ -8,7 +8,9 @@ import Data.Ord (comparing)
 import Input (input8)
 import Data.Maybe (catMaybes)
 
-set0 = [undefined,euler1,euler2,euler3,euler4,euler5,euler6,euler7,euler8,euler9]
+set0 :: [(Int, String)]
+set0 = zip [1..]
+       [euler1,euler2,euler3,euler4,euler5,euler6,euler7,euler8,euler9]
 
 euler1 = show . sum $ union [3,6..999] [5,10..999]
 

@@ -9,7 +9,10 @@ import Data.Ord (comparing)
 import Atkin (primes)
 import Data.Array.Unboxed (listArray,UArray,(!))
 
-set3 = [euler30,euler31,euler32,euler33,euler34,euler35,euler36,euler37,euler38,euler39]
+set3 :: [(Int, String)]
+set3 = zip [30..]
+       [euler30,euler31,euler32,euler33,euler34,euler35,euler36,euler37,euler38,
+       euler39]
 
 euler30 = show . sum . filter (\x -> x == (sum . map (^5) . digits $ x)) $ [2..200000]
 

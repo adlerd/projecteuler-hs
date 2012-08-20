@@ -1,26 +1,33 @@
 module Main where
 
-import Set0 (set0)
-import Set1 (set1)
-import Set2 (set2)
-import Set3 (set3)
-import Set4 (set4)
-import Set5 (set5)
-import Set6 (set6)
-import Set7 (set7)
-import Set8 (set8)
+import Set0
+import Set1
+import Set2
+import Set3
+import Set4
+import Set5
+import Set6
+import Set7
+import Set8
 
-lastProblem = 83
+import Data.Maybe (fromJust)
+import Data.List (sortBy)
+import Data.Ord (comparing)
+import qualified Control.Exception as CE
+import Control.Monad (guard)
+import System.IO.Error (isEOFError)
+
+sets :: [[(Int, String)]]
 sets = [set0,set1,set2,set3,set4,set5,set6,set7,set8]
 
-driver input = (sets !! s) !! p
-    where
-      (s,p) = (read input :: Int) `quotRem` 10
+lookupProblem n = fromJust . lookup n . (!! (n `quot` 10)) $ sets
 
-main = do tmp <- getLine
-          if tmp == "q"
-          then return ()
-          else do if tmp == "check"
-                  then mapM_ (putStrLn . show) . zip [1..lastProblem] . tail . concat $ sets
-                  else putStrLn ('>' : driver tmp)
-                  main
+getCommand = CE.catchJust (guard . isEOFError) getLine (\_ -> return "q")
+
+main = do command <- getCommand
+          case command of
+           "q"     -> return ()
+           "check" -> mapM_ (putStrLn . show) . sortBy (comparing fst) . concat
+                      $ sets
+           _       -> (>> main) . putStrLn . showString "* "
+                      . lookupProblem . (read :: String -> Int) $ command

@@ -11,7 +11,10 @@ import Data.Char (digitToInt,chr)
 import Data.Ratio
 import Data.Bits (xor)
 
-set5 = [euler50,euler51,euler52,euler53,euler54,euler55,euler56,euler57,euler58,euler59]
+set5 :: [(Int, String)]
+set5 = zip [50..]
+       [euler50,euler51,euler52,euler53,euler54,euler55,euler56,euler57,euler58,
+       euler59]
 
 euler50 = show . fst . head . filter (flip Sorted.elem primes . fst)
           . sortBy (flip $ comparing snd) . takeWhile ((< 1000000) . fst)

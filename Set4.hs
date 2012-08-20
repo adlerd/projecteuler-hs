@@ -7,7 +7,10 @@ import Sorted (elem,nub,difference,intersection,mergeInfinite,count)
 import Input (input42)
 import Data.Array.Unboxed (listArray,UArray,(!))
 
-set4 = [euler40,euler41,euler42,euler43,euler44,euler45,euler46,euler47,euler48,euler49]
+set4 :: [(Int, String)]
+set4 = zip [40..]
+       [euler40,euler41,euler42,euler43,euler44,euler45,euler46,euler47,euler48,
+       euler49]
 
 euler40 = show . product . map ((intsCat !!) . (10^)) $ [0..6]
     where

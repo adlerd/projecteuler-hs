@@ -8,7 +8,9 @@ import qualified PQ
 import Data.Array (bounds, (!), (//), Array, listArray)
 import Data.Ix (inRange)
 
-set8 = take 10 $ [euler80, euler81, euler82, euler83] ++ repeat undefined
+set8 :: [(Int, String)]
+set8 = zip [80..]
+       [euler80,euler81,euler82,euler83]
 
 euler80 = show . sum . concat . filter (\(_:xs) -> xs /= replicate 99 0)
           . map sqrtDigs $ [1..99]

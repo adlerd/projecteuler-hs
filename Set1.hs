@@ -12,7 +12,10 @@ import Data.Bits
 import Data.Word (Word32)
 import Data.Char (digitToInt)
 
-set1 = [euler10,euler11,euler12,euler13,euler14,euler15,euler16,euler17,euler18,euler19]
+set1 :: [(Int, String)]
+set1 = zip [10..]
+       [euler10,euler11,euler12,euler13,euler14,euler15,euler16,euler17,euler18,
+       euler19]
 
 euler10 = show . sum . takeWhile (< 2000000) $ primes
 

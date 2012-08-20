@@ -9,7 +9,10 @@ import Data.Ratio ((%),denominator)
 import qualified Data.MemoCombinators as MC
 import Input (input79)
 
-set7 = [euler70,euler71,euler72,euler73,euler74,euler75,euler76,euler77,euler78,euler79]
+set7 :: [(Int, String)]
+set7 = zip [70..]
+       [euler70,euler71,euler72,euler73,euler74,euler75,euler76,euler77,euler78,
+       euler79]
 
 euler70 = show . fst . fromJust $ foldl' fold Nothing [2..9999999]
     where

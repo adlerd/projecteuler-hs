@@ -10,7 +10,10 @@ import Set1 (reduceTri)
 import Input (input67)
 import Sorted (count)
 
-set6 = [euler60,euler61,euler62,euler63,euler64,euler65,euler66,euler67,euler68,euler69]
+set6 :: [(Int, String)]
+set6 = zip [60..]
+       [euler60,euler61,euler62,euler63,euler64,euler65,euler66,euler67,euler68,
+       euler69]
 
 euler60 = show . head $ do (a:as) <- tails primes'
                            let a' = filter (goodpair a) as

@@ -12,7 +12,10 @@ import Data.Maybe (fromJust)
 import qualified PQ
 import Sorted (mapElem,elem,nub,mergeMany)
 
-set2 = [euler20,euler21,euler22,euler23,euler24,euler25,euler26,euler27,euler28,euler29]
+set2 :: [(Int, String)]
+set2 = zip [20..]
+       [euler20,euler21,euler22,euler23,euler24,euler25,euler26,euler27,euler28,
+       euler29]
 
 euler20 = show . sum . digits . product $ [1..100]
 
