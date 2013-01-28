@@ -60,7 +60,7 @@ euler14 = show . fst . foldl1' maxBySnd . map (id &&& collatzLength)  $ [1..9999
           | n == 1 = 0
           | otherwise = 2 + (collatzLength' $ n + (n `shiftR` 1) + 1)
 
-euler15 = show $ (product [21..40]) `quot` (product [1..20])
+euler15 = show $ quot (product [21..40]) (product [1..20])
         {- This is 21 choose 20 with repetitions; an array of right-movements
         leaving 21 positions among and around them for down-movements to fit: 21
         boxes and 20 balls. This is C(21+20-1,20), which is (40!)/(20!20!) -}
