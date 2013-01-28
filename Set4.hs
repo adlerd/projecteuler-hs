@@ -66,7 +66,7 @@ pentagonals = scanl (+) 1 [4,7..]
 triangles = scanl (+) 1 [2..]
 hexagonals = scanl (+) 1 [5,9..]
 
-euler45 = show . head . intersection h' . intersection p' $ t'
+euler45 = show . head . foldl1 intersection $ [h', p', t']
     where
       back = dropWhile (<= 40755)
       p' = back pentagonals
