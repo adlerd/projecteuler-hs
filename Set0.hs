@@ -41,5 +41,4 @@ euler9 = show . product3 . head . filter ((== 1000) . sum3) . catMaybes
     where
       sum3 (a,b,c) = a + b + c
       product3 (a,b,c) = a * b * c
-      testPair a b = do c <- iSqrt (a^2+b^2)
-                        return (a,b,c)
+      testPair a b = return . (,,) a b =<< iSqrt (a^2+b^2)
