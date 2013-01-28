@@ -116,7 +116,7 @@ euler78 = show . fst . head . dropWhile ((/= 0) . (`mod` 1000000) . snd)
 euler79 = show . undigits . head
           . foldr (\x-> nubgroupsort . concatMap (rectify x)) [[]] $ input79
     where
-      nubgroupsort = Sorted.nub . head .groupBy (\a b -> length a == length b)
+      nubgroupsort = Sorted.nub . head . groupBy (\a b -> length a == length b)
                      . sortBy (comparing length)
       rectify :: (Eq a) => [a] -> [a] -> [[a]]
       rectify a b = filter good $ rectify' a b
