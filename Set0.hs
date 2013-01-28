@@ -18,13 +18,13 @@ euler2 = show . sum . filter even . takeWhile (< 4000000) $ fibonacci
 
 euler3 = show . last . factors $ 600851475143
 
-euler4 = show . last . sort
-         . concatMap (lastCons . filter (isPalindrome . show)) $ products
+euler4 = show . maximum . catMaybes
+         . map (last' . filter (isPalindrome . show)) $ products
     where
       isPalindrome xs = xs == reverse xs
       products = [[x*y | y <- [x..999]] | x <- [100..999]]
-      lastCons [] = []
-      lastCons x = [last x]
+      last' [] = Nothing
+      last' xs = Just . last $ xs
 
 euler5 = show . product . uncount . map (maximumBy . comparing $ snd)
          . groupBy ((==) `by` fst) . sort . concatMap (count . factors)
