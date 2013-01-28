@@ -87,8 +87,8 @@ evaluateHand xs = (htype, Sorted.nub vsort)
                                   boolToMaybe (1 == length pairs)
                                                   (OnePair . head $ pairs),
                                   Just NoPair]
-      downfrom x = [x,x-1..]
-      straight = vsort == (take 5 . downfrom . head $ vsort)
+      downfrom x = map (x-) [1..4]
+      straight = tail vsort == (downfrom . head $ vsort)
                  || vsort == [14,5,4,3,2]
       alleq (x:xs) = all (x ==) xs
       flush = alleq . map snd $ xs
