@@ -34,7 +34,7 @@ euler6 = show . uncurry (-) . (sq . sum &&& sum . map sq) $ [1..100]
 
 euler7 = show $ primes !! 10000
 
-euler8 = show . maximum . map product . filter (not . elem 0) . slide 5 $ input8
+euler8 = show . maximum . map product . slide 5 $ input8
 
 euler9 = show . product3 . head . filter ((== 1000) . sum3) . catMaybes
          $ [testPair a b | b <- [2..], a <- [1..b]]
