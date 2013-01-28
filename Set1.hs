@@ -90,23 +90,28 @@ reduceTri = head . foldr1 (\top bottom -> zipWith (+) top (reduceRow bottom))
       reduceRow :: (Ord a) => [a] -> [a]
       reduceRow = map (\[a,b] -> max a b) . slide 2
 
-euler19 = show . length . filter (\(w,(d,_,_)) -> w == SUN && d == 1) .
-          takeWhile (\(_,(_,_,y)) -> y < 2001) . dropWhile (\(_,(_,_,y)) -> y < 1901)
+euler19 = show . length . filter ((== SUN) . fst) . filter ((== 1) . day . snd)
+          . takeWhile ((< 2001) . year . snd) . dropWhile ((< 1901) . year. snd)
           $ from1900
 
-data Months = JAN | FEB | MAR | APR | MAY | JUN | JUL | AUG | SEP | OCT | NOV | DEC
+data Month = JAN | FEB | MAR | APR | MAY | JUN | JUL | AUG | SEP | OCT | NOV | DEC
               deriving (Enum, Ord, Eq, Show)
 
-expandYear year = concatMap (expandMonth year) [JAN .. DEC]
-expandMonth year month = map (\d -> (d,month,year)) [1..days]
-    where
-      days
-          | month `elem` [JAN, MAR, MAY, JUL, AUG, OCT, DEC] = 31
-          | month `elem` [APR, JUN, SEP, NOV] = 30
-          | year `rem` 4 /= 0 || (year `rem` 400) `elem` [100,200,300] = 28
-          | otherwise = 29
-
-data Days = MON | TUE | WED | THU | FRI | SAT | SUN
+data Day = SUN | MON | TUE | WED | THU | FRI | SAT
             deriving (Enum, Ord, Eq, Show)
 
-from1900 = zip (cycle [MON .. SUN]) $ concatMap expandYear [1900..]
+data Date = Date { day :: Int, month :: Month, year :: Int }
+
+dates startYear = do y <- [startYear..]
+                     m <- [JAN .. DEC]
+                     d <- [1..numdays m y]
+                     return $ Date d m y
+
+numdays month year
+    | elem month [JAN, MAR, MAY, JUL, AUG, OCT, DEC] = 31
+    | elem month [APR, JUN, SEP, NOV] = 30
+    | (/= 0) $ year `rem` 4 = 28
+    | elem (year `rem` 400) [100,200,300] = 28
+    | otherwise = 29
+
+from1900 = zip (tail $ cycle [SUN .. SAT]) $ dates 1900
