@@ -7,6 +7,7 @@ import Data.List (sort, groupBy, maximumBy, tails, foldl1')
 import Data.Ord (comparing)
 import Input (input8)
 import Data.Maybe (catMaybes)
+import Control.Arrow ((&&&))
 
 set0 :: [(Int, String)]
 set0 = zip [1..]
@@ -27,7 +28,9 @@ euler4 = show . maximum . catMaybes
 
 euler5 = show . foldl1' lcm $ [1..20]
 
-euler6 = show $ ((^ 2) . sum $ [1..100]) - (sum . map (^ 2) $ [1..100])
+euler6 = show . uncurry (-) . (sq . sum &&& sum . map sq) $ [1..100]
+    where
+      sq = (^ 2)
 
 euler7 = show $ primes !! 10000
 
