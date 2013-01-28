@@ -11,7 +11,7 @@ import Data.Ord (comparing)
 import Data.Bits
 import Data.Word (Word32)
 import Data.Char (digitToInt)
-import Control.Arrow ((***), first, second)
+import Control.Arrow ((***), (&&&), first, second)
 import Data.Ix (inRange)
 
 set1 :: [(Int, String)]
@@ -40,7 +40,7 @@ euler12 = show . fromJust . find ((> 500) . divisorCount) $ scanl1 (+) [1..]
 
 euler13 = take 10 . show . sum $ input13
 
-euler14 = show . fst . foldl1' maxBySnd . map (\x -> (x,collatzLength x)) $ [1..999999]
+euler14 = show . fst . foldl1' maxBySnd . map (id &&& collatzLength)  $ [1..999999]
     where
       maxBySnd aa@(_,a) bb@(_,b)
         | a > b = aa
