@@ -2,7 +2,7 @@ module Set0 (set0) where
 
 import Atkin (primes)
 import Sorted (union, count, uncount)
-import EulerUtil (factors, allBut, iSqrt, slide, fibonacci)
+import EulerUtil (factors, allBut, iSqrt, slide, fibonacci, isPalindrome)
 import Data.List (sort, groupBy, maximumBy, tails, foldl1')
 import Data.Ord (comparing)
 import Input (input8)
@@ -21,7 +21,6 @@ euler3 = show . last . factors $ 600851475143
 euler4 = show . maximum . catMaybes
          . map (last' . filter (isPalindrome . show)) $ products
     where
-      isPalindrome xs = xs == reverse xs
       products = [[x*y | y <- [x..999]] | x <- [100..999]]
       last' [] = Nothing
       last' xs = Just . last $ xs
