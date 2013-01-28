@@ -16,6 +16,7 @@ import Data.Ord (comparing)
 import qualified Control.Exception as CE
 import Control.Monad (guard)
 import System.IO.Error (isEOFError)
+import Control.Arrow ((&&&))
 
 sets :: [[(Int, String)]]
 sets = [set0,set1,set2,set3,set4,set5,set6,set7,set8]
@@ -29,5 +30,5 @@ main = do command <- getCommand
            "q"     -> return ()
            "check" -> mapM_ (putStrLn . show) . sortBy (comparing fst) . concat
                       $ sets
-           _       -> (>> main) . putStrLn . showString "* "
-                      . lookupProblem . (read :: String -> Int) $ command
+           _       -> (>> main) . print . (id &&& lookupProblem)
+                      . (read :: String -> Int) $ command
