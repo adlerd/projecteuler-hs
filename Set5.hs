@@ -5,7 +5,7 @@ import Sorted (elem,mergeInfinite,nub,mapElem)
 import Atkin (primes)
 import Data.List (sortBy,tails,unfoldr,foldl',groupBy,sort)
 import Data.Ord (comparing)
-import EulerUtil (digits,slide,isPalindrome,undigits,undigits',isPrime)
+import EulerUtil (digits,slide,isPalindrome,undigits,undigits',isPrime,justFind)
 import Data.Maybe (mapMaybe,listToMaybe,catMaybes)
 import Data.Char (digitToInt,chr)
 import Data.Ratio
@@ -16,7 +16,7 @@ set5 = zip [50..]
        [euler50,euler51,euler52,euler53,euler54,euler55,euler56,euler57,euler58,
        euler59]
 
-euler50 = show . fst . head . filter (flip Sorted.elem primes . fst)
+euler50 = show . fst . justFind (flip Sorted.elem primes . fst)
           . sortBy (flip $ comparing snd) . takeWhile ((< 1000000) . fst)
           $ primeSpanSums
     where
@@ -50,7 +50,7 @@ euler51 = show . head . concatMap selByG8 . bylog10 $ primes
             b2 True r = r*2+1
             b2 False r = r*2
 
-euler52 = show . head . filter satisfies $ [1..]
+euler52 = show . justFind satisfies $ [1..]
     where
       satisfies x = all ((ds==) . sort . digits . (x*)) [2..6]
           where
@@ -132,7 +132,7 @@ euler57 = show . length . filter satisfies . take 1000 . iterate step $ 3%2
             n = numerator r
             d = denominator r
 
-euler58 = show . (\(_,_,n,_) -> 2*n+1) . head . dropWhile (\(r,_,_,_) -> r >= 1%10)
+euler58 = show . (\(_,_,n,_) -> 2*n+1) . justFind (\(r,_,_,_) -> r < 1%10)
           . iterate step $ (1%1,0,0,diagPrimes)
     where
       diags = concat [[x,x+2*n,x+4*n]| n <- [1..], let x = 1+2*n*(2*n-1)]
@@ -144,7 +144,7 @@ euler58 = show . (\(_,_,n,_) -> 2*n+1) . head . dropWhile (\(r,_,_,_) -> r >= 1%
             (dps1,dps2) = span (< (2*n+1)^2) dps
             pCt' = pCt + length dps1
 
-euler59 = show . sum . head . filter (\t -> all (`Prelude.elem` (asciiWords t)) common)
+euler59 = show . sum . justFind (\t -> all (`Prelude.elem` (asciiWords t)) common)
           . map (decrypt input59)
           $ [[a,b,c] | a <- [97..122], b <- [97..122], c <- [97..122]]
     where

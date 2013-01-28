@@ -2,7 +2,7 @@ module Set0 (set0) where
 
 import Atkin (primes)
 import Sorted (union, count, uncount)
-import EulerUtil (factors, allBut, iSqrt, slide, fibonacci, isPalindrome)
+import EulerUtil (factors, allBut, iSqrt, slide, fibonacci, isPalindrome, justFind)
 import Data.List (sort, groupBy, maximumBy, tails, foldl1')
 import Data.Ord (comparing)
 import Input (input8)
@@ -36,7 +36,7 @@ euler7 = show $ primes !! 10000
 
 euler8 = show . maximum . map product . slide 5 $ input8
 
-euler9 = show . product3 . head . filter ((== 1000) . sum3) . catMaybes
+euler9 = show . product3 . justFind ((== 1000) . sum3) . catMaybes
          $ [testPair a b | b <- [2..], a <- [1..b]]
     where
       sum3 (a,b,c) = a + b + c

@@ -2,7 +2,7 @@ module Set7 (set7) where
 
 import Sorted (mergeMany,mergeInfinite,nub)
 import Data.List (minimumBy,sort,foldl',nub,groupBy,sortBy)
-import EulerUtil (totient,digits,lengthInRange,isPrime,undigits)
+import EulerUtil (totient,digits,lengthInRange,isPrime,undigits,justFind)
 import Data.Ord (comparing)
 import Data.Maybe (fromJust, mapMaybe)
 import Data.Ratio ((%),denominator)
@@ -27,7 +27,7 @@ euler70 = show . fst . fromJust $ foldl' fold Nothing [2..9999999]
 
 euler71 = show . fst . last . takeWhile ((<= 1000000) . snd) . iterate closer $ (2,7)
     where
-      closer (n,d) = head . filter ((> r) . uncurry (%)) . mapMaybe (closest (n+1))
+      closer (n,d) = justFind ((> r) . uncurry (%)) . mapMaybe (closest (n+1))
                      $ [d+1..]
           where
             r = n%d
@@ -87,7 +87,7 @@ euler76 = show . subtract 1 $ parts' 100 1
             | otherwise = (f n $ k+1) + (f (n-k) k)
       parts' = MC.memo2 (MC.arrayRange (1,100)) MC.integral (parts parts')
 
-euler77 = show . fst . head . dropWhile ((<= 5000) . snd) . map (\n -> (n, parts' n 1))
+euler77 = show . fst . justFind ((> 5000) . snd) . map (\n -> (n, parts' n 1))
           $ [1..]
     where
       parts f n k
@@ -96,7 +96,7 @@ euler77 = show . fst . head . dropWhile ((<= 5000) . snd) . map (\n -> (n, parts
           | otherwise = (f n $ k+1) + if isPrime k then (f (n-k) k) else 0
       parts' = MC.memo2 (MC.arrayRange (1,200)) MC.integral (parts parts')
 
-euler78 = show . fst . head . dropWhile ((/= 0) . (`mod` 1000000) . snd)
+euler78 = show . fst . justFind ((== 0) . (`mod` 1000000) . snd)
             . map (\n -> (n, parts' n)) $ [1..]
     where
       parts :: (Int -> Integer) -> Int -> Integer

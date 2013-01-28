@@ -2,7 +2,7 @@ module Set4 (set4) where
 
 import Atkin (primes)
 import Data.List (sort,insert,unfoldr,groupBy)
-import EulerUtil (digits,undigits,iSqrt,factors,slide,rCombinations)
+import EulerUtil (digits,undigits,iSqrt,factors,slide,rCombinations,justFind)
 import Sorted (elem,nub,difference,intersection,mergeInfinite,count)
 import Input (input42)
 import Data.Array.Unboxed (listArray,UArray,(!))
@@ -76,12 +76,12 @@ euler45 = show . head . foldl1 intersection $ [h', p', t']
 euler46 = show . head . flip Sorted.difference primes . Sorted.difference [3,5..]
           . mergeInfinite . map (\p -> map ((p +) . (2 *) . (^ 2)) [0..]) $ primes
 
-euler47 = show . fst . head . filter (and . snd) . zip [1..] . slide 4
+euler47 = show . fst . justFind (and . snd) . zip [1..] . slide 4
         . map ((> 3) . length . count . factors) $ [1..]
 
 euler48 = reverse . take 10 . reverse . show . sum . map (\x -> x^x) $ [1..1000]
 
-euler49 = head . filter (/= "148748178147") . map (concatMap show) . filter isArithSeq
+euler49 = justFind (/= "148748178147") . map (concatMap show) . filter isArithSeq
           . concatMap (rCombinations 3) . map (map snd)
           . groupBy (\a b -> fst a == fst b) . sort
           . map (\p -> (read . sort . show $ p :: Int, p))

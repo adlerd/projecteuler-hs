@@ -1,7 +1,7 @@
 module Set2 (set2) where
 
 import Atkin (primes)
-import EulerUtil (factors,divisorFun,fibonacci,digits,selectAntiSelect)
+import EulerUtil (factors,divisorFun,fibonacci,digits,selectAntiSelect,justFind)
 import Data.Char (intToDigit)
 import Data.Array.Unboxed (listArray,UArray,(!))
 import Input (input22)
@@ -65,7 +65,7 @@ euler24 = map (intToDigit) . (!! 999999) . lexPermutations $ [0..9]
       lexPermutations xs = concatMap (\(a,b) -> map (a:) (lexPermutations b))
                            . selectAntiSelect $ xs
 
-euler25 = show . fst . head . dropWhile ((< 1000) . length . show . snd) . zip [1..]
+euler25 = show . fst . justFind ((>= 1000) . length . show . snd) . zip [1..]
           $ fibonacci
 
 euler26 = show . maximumBy (comparing recRep) $ [1..999]
@@ -78,7 +78,7 @@ euler26 = show . maximumBy (comparing recRep) $ [1..999]
             recRep' n =  (1+) . fromJust . elemIndex start . tail .
                          iterate ((10*) . (`rem` n)) $ start
                 where
-                  start = head . dropWhile (< n) . iterate (10 *) $ 1
+                  start = justFind (>= n) . iterate (10 *) $ 1
 
 euler27 = show . fst . maximumBy (comparing snd)
           $ [(a*b, primeCount a b) | a <- [-999..999], b <- dropWhile (<= (- a)) bPrimes]

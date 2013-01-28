@@ -1,6 +1,6 @@
 module Set6 (set6) where
 
-import EulerUtil (digits,undigits,isPrime,lengthInRange,totient)
+import EulerUtil (digits,undigits,isPrime,lengthInRange,totient,justFind)
 import Atkin (primes)
 import Data.List (tails,permutations,unfoldr,sort,groupBy,sortBy,elemIndex,findIndex,
                   find,maximumBy,minimumBy)
@@ -48,7 +48,7 @@ euler61 = head $
     where
       links p = ((== (p `mod` 100)) . (`div` 100))
 
-euler62 = show . fst . head . head . filter (lengthInRange 5 5)
+euler62 = show . fst . head . justFind (lengthInRange 5 5)
           . concatMap (groupBy sndEq . sortBy (comparing snd)
                        . map (\x -> (x, sort . digits $ x))) $ cubesByLen
     where

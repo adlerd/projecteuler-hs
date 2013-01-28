@@ -1,7 +1,7 @@
 module Set1 (set1,reduceTri) where
 
 import Atkin (primes)
-import EulerUtil (slide,divisorCount)
+import EulerUtil (slide,divisorCount,justFind)
 import Data.List (unfoldr,find,maximumBy,foldl1')
 import Input (input11, input13, input18)
 import Data.Array.IArray ((!), bounds, listArray)
@@ -36,7 +36,7 @@ euler11 = show . maximum . map product . concatMap (slide 4) . concat $ [rows,co
       incr = (+) 1
       decr = subtract 1
 
-euler12 = show . fromJust . find ((> 500) . divisorCount) $ scanl1 (+) [1..]
+euler12 = show . justFind ((> 500) . divisorCount) $ scanl1 (+) [1..]
 
 euler13 = take 10 . show . sum $ input13
 

@@ -72,3 +72,5 @@ lengthInRange l u xs
       secD = drop (u - l + 1) firstD
 
 totient = product . map (\(p,x) -> (p-1)*p^(x-1)) . count . factors
+
+justFind f = head . filter f
