@@ -2,7 +2,7 @@ module Set0 (set0) where
 
 import Atkin (primes)
 import Sorted (union, count, uncount)
-import EulerUtil (factors, by, allBut, iSqrt, slide,fibonacci)
+import EulerUtil (factors, allBut, iSqrt, slide, fibonacci)
 import Data.List (sort, groupBy, maximumBy, tails, foldl1')
 import Data.Ord (comparing)
 import Input (input8)
