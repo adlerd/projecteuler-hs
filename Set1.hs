@@ -43,21 +43,22 @@ euler13 = take 10 . show . sum $ input13
 euler14 = show . fst . foldl1' maxBySnd . map (id &&& collatzLength)  $ [1..999999]
     where
       maxBySnd aa@(_,a) bb@(_,b)
-        | a > b = aa
+      {- keep this! although foldl1 maxBySnd == maximumBy (comparing snd), the
+       - strictness is required here. -}
+          | a > b = aa
           | otherwise = bb
       smallLengths :: UArray Word32 Int
       smallLengths = listArray (1,10000) $ 0 : map collatzLength' [2..]
       collatzLength :: Word32 -> Int
       collatzLength n
           | n < 10000 = smallLengths ! n
-          | n `testBit` 0 = 2 + (collatzLength $ n + (n `shiftR` 1) + 1)
+          | odd n = 2 + (collatzLength $ n + (n `shiftR` 1) + 1)
           | otherwise = 1 + collatzLength (n `shiftR` 1)
       collatzLength' :: Word32 -> Int
       collatzLength' n
-          | n `testBit` 0 = if n == 1
-                            then 0
-                            else 2 + (collatzLength' $ n + (n `shiftR` 1) + 1)
-          | otherwise = 1 + collatzLength' (n `shiftR` 1)
+          | even n = 1 + collatzLength' (n `shiftR` 1)
+          | n == 1 = 0
+          | otherwise = 2 + (collatzLength' $ n + (n `shiftR` 1) + 1)
 
 euler15 = show $ (product [21..40]) `quot` (product [1..20])
         {- This is 21 choose 20 with repetitions; an array of right-movements
