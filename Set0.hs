@@ -3,7 +3,7 @@ module Set0 (set0) where
 import Atkin (primes)
 import Sorted (union, count, uncount)
 import EulerUtil (factors, by, allBut, iSqrt, slide,fibonacci)
-import Data.List (sort, groupBy, maximumBy, tails)
+import Data.List (sort, groupBy, maximumBy, tails, foldl1')
 import Data.Ord (comparing)
 import Input (input8)
 import Data.Maybe (catMaybes)
@@ -26,9 +26,7 @@ euler4 = show . maximum . catMaybes
       last' [] = Nothing
       last' xs = Just . last $ xs
 
-euler5 = show . product . uncount . map (maximumBy . comparing $ snd)
-         . groupBy ((==) `by` fst) . sort . concatMap (count . factors)
-         $ [1..20]
+euler5 = show . foldl1' lcm $ [1..20]
 
 euler6 = show $ ((^ 2) . sum $ [1..100]) - (sum . map (^ 2) $ [1..100])
 
