@@ -39,13 +39,12 @@ mMin (Just x) Nothing = x
 mMin Nothing Nothing = 0
 mMin (Just x) (Just y) = min x y
 
-euler81 = show . fromJust . last . foldl nextRow (repeat Nothing)
-          . makeRows 80 $ (map fromIntegral input81 :: [Integer])
+input81' = makeRows 80 input81
+euler81 = show . fromJust . last . foldl nextRow (repeat Nothing) $ input81'
     where
       nextRow prev current = tail . scanl aRow Nothing $ zip prev current
 
-euler82 = show . foldl1 min . last . scanl1 nextRow
-          . transpose . makeRows 80 $ (map fromIntegral input81 :: [Integer])
+euler82 = show . foldl1 min . last . scanl1 nextRow . transpose $ input81'
     where
       nextRow prev current = zipWith mMin
                              (tail $ scanl aRow Nothing pc)
@@ -79,7 +78,7 @@ dijStep (DState src ud)
 euler83 = show . head . mapMaybe stateToMaybe . iterate dijStep $ start
     where
       input :: Array (Int, Int) (Maybe Int)
-      input = (listArray ((1,1),(80,80)) . map Just $  input81)
+      input = (listArray ((1,1),(80,80)) . map (Just . fromIntegral) $ input81)
       stateToMaybe (DDone i) = Just i
       stateToMaybe _ = Nothing
       start = DState input (PQ.insert (fromJust $ input ! st, st) PQ.Empty)
