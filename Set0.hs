@@ -14,7 +14,7 @@ set0 = zip [1..]
 
 euler1 = show . sum $ union [3,6..999] [5,10..999]
 
-euler2 = show . sum . takeWhile (< 4000000) . filter even $ fibonacci
+euler2 = show . sum . filter even . takeWhile (< 4000000) $ fibonacci
 
 euler3 = show . last . factors $ 600851475143
 
