@@ -1,12 +1,12 @@
 module Set2 (set2) where
 
 import Atkin (primes)
-import EulerUtil (factors,divisorFun,fibonacci,digits,selectAntiSelect,justFind)
+import EulerUtil (factors,divisorFun,fibonacci,digits,selectAntiSelect,justFind, maxIn)
 import Data.Char (intToDigit)
 import Data.Array.Unboxed (listArray,UArray,(!))
 import Input (input22)
 import qualified Data.Char (ord)
-import Data.List (sort,inits,tails,elemIndex,maximumBy)
+import Data.List (sort,inits,tails,elemIndex,maximumBy,foldl1')
 import Data.Ord (comparing)
 import Data.Maybe (fromJust)
 import qualified PQ
@@ -80,7 +80,7 @@ euler26 = show . maximumBy (comparing recRep) $ [1..999]
                 where
                   start = justFind (>= n) . iterate (10 *) $ 1
 
-euler27 = show . fst . maximumBy (comparing snd)
+euler27 = show . fst . foldl1' (maxIn snd)
           $ [(a*b, primeCount a b) | a <- [-999..999], b <- dropWhile (<= (- a)) bPrimes]
     where
       bPrimes = takeWhile (< 1000) primes

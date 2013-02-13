@@ -74,3 +74,8 @@ lengthInRange l u xs
 totient = product . map (\(p,x) -> (p-1)*p^(x-1)) . count . factors
 
 justFind f = head . filter f
+
+maxIn :: Ord b => (a -> b) -> a -> a -> a
+maxIn f x y
+    | f y > f x = y
+    | otherwise = x
