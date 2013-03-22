@@ -1,17 +1,19 @@
 module Set8 (set8) where
 
-import Data.List (mapAccumL,transpose)
+import Data.List (mapAccumL,transpose,unfoldr,find)
 import EulerUtil (digits)
 import Data.Maybe (fromJust,mapMaybe)
 import Input (input81)
 import qualified PQ
 import Data.Array (bounds, (!), (//), Array, listArray)
 import Data.Ix (inRange)
+import Control.Monad (guard)
+import Control.Arrow ((&&&))
 import Monopoly
 
 set8 :: [(Int, String)]
 set8 = zip [80..]
-       [euler80,euler81,euler82,euler83,euler84]
+       [euler80,euler81,euler82,euler83,euler84,euler85]
 
 euler80 = show . sum . concat . filter (\(_:xs) -> xs /= replicate 99 0)
           . map sqrtDigs $ [1..99]
@@ -84,3 +86,27 @@ euler83 = show . head . mapMaybe stateToMaybe . iterate dijStep $ start
       stateToMaybe _ = Nothing
       start = DState input (PQ.insert (fromJust $ input ! st, st) PQ.Empty)
       st = fst . bounds $ input
+
+type Rect = (Int, Int)
+
+rCount :: Rect -> Int
+rCount (a,b) = (a*a+a)*(b*b+b) `quot` 4
+
+area = uncurry (*)
+
+euler85 = show . fst . foldl1 smaller . map (area &&& subtract target . rCount)
+          . concat . unfoldr step $ (1,2001)
+  where
+    target = 2000000
+    start = dropWhile ((< target) . rCount) [(1,y) | y <- [1..]]
+    over :: Rect -> Rect
+    over (x,y) = (x+1,y)
+    scanDown :: Rect -> Maybe (Rect,Rect)
+    scanDown (x,y) = find ((< target) . rCount . snd) . zip xs $ tail xs
+      where
+        xs = [(x,y') | y' <- [y,y-1..]]
+    step :: Rect -> Maybe ([Rect], Rect)
+    step r@(x,y) = do guard (y > x)
+                      (h,l) <- scanDown r
+                      return ([h,l], over h)
+    smaller a'@(_,a) b'@(_,b) = if abs a <= abs b then a' else b'
