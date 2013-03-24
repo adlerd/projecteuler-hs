@@ -1,10 +1,9 @@
 module Set0 (set0) where
 
 import Atkin (primes)
-import Sorted (union, count, uncount)
-import EulerUtil (factors, allBut, iSqrt, slide, fibonacci, isPalindrome, justFind)
-import Data.List (sort, groupBy, maximumBy, tails, foldl1')
-import Data.Ord (comparing)
+import Sorted (union)
+import EulerUtil (factors, slide, fibonacci, isPalindrome, justFind)
+import Data.List (foldl1')
 import Input (input8)
 import Data.Maybe (catMaybes)
 import Control.Arrow ((&&&))
