@@ -9,6 +9,7 @@ import Data.Ord (comparing)
 import Atkin (primes)
 import Data.Array.Unboxed (listArray,UArray,(!))
 import Control.Monad (guard)
+import PTriplets (pythagsBLim)
 
 set3 :: [(Int, String)]
 set3 = zip [30..]
@@ -94,9 +95,4 @@ euler38 = show . maximum . concatMap cProds $ [1..10000]
 euler39 = show . fst . maximumBy (comparing snd) . count . sort $ relevantPythagPs
     where
       relevantPythagPs = filter (<=1000) . map (\(a,b,c) -> a+b+c)
-                        . takeWhile (\(_,b,_) -> 2*b < 1000) $ pythags
-      pythags = mapMaybe testPair [(a,b) | b <- [2..], a <- [1..b]]
-      testPair :: (Int, Int) -> Maybe (Int, Int, Int)
-      testPair (a,b) = do let (c, exact) = iSqrt (a^2+b^2)
-                          guard exact
-                          return (a,b,c)
+                         $ pythagsBLim 500
