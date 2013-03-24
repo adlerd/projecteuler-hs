@@ -1,6 +1,8 @@
+{-# LANGUAGE FlexibleContexts #-}
+
 module Set8 (set8) where
 
-import Data.List (mapAccumL,transpose,unfoldr,find)
+import Data.List (mapAccumL,transpose,unfoldr,find,groupBy)
 import EulerUtil (digits)
 import Data.Maybe (fromJust,mapMaybe)
 import Input (input81)
@@ -8,12 +10,17 @@ import qualified PQ
 import Data.Array (bounds, (!), (//), Array, listArray)
 import Data.Ix (inRange)
 import Control.Monad (guard)
-import Control.Arrow ((&&&))
+import Control.Arrow ((&&&),first,second)
 import Monopoly
+import PTriplets (pythags)
+import Control.Monad.Writer.Lazy
+import Control.Monad.State.Strict
+import qualified Data.IntMap.Strict as IM
+import Data.Function (on)
 
 set8 :: [(Int, String)]
 set8 = zip [80..]
-       [euler80,euler81,euler82,euler83,euler84,euler85]
+       [euler80,euler81,euler82,euler83,euler84,euler85,euler86]
 
 euler80 = show . sum . concat . filter (\(_:xs) -> xs /= replicate 99 0)
           . map sqrtDigs $ [1..99]
@@ -110,3 +117,31 @@ euler85 = show . fst . foldl1 smaller . map (area &&& subtract target . rCount)
                       (h,l) <- scanDown r
                       return ([h,l], over h)
     smaller a'@(_,a) b'@(_,b) = if abs a <= abs b then a' else b'
+
+partialUnfoldr :: (b -> Maybe (a, b)) -> b -> ([a], b)
+partialUnfoldr f d = case f d of
+                       Just (e,d') -> first (e:) $ partialUnfoldr f d'
+                       Nothing -> ([], d)
+
+euler86 = show . fst . head . dropWhile ((< 1000000) . snd) $ solsBelow
+  where
+    solsBelow :: [(Int, Int)]
+    mEuler86 :: (MonadState (IM.IntMap Int) m, MonadWriter [(Int, Int)] m) => m ()
+    updateCs :: (MonadState (IM.IntMap Int) m) => [(Int, Int)] -> m ()
+    dumpComplete :: (MonadState (IM.IntMap Int) m, MonadWriter [(Int, Int)] m) =>
+                      IM.Key -> m ()
+    nextComplete :: IM.Key -> IM.IntMap a -> Maybe ((IM.Key, a), IM.IntMap a)
+    groupedSolns :: [(Int, [(Int, Int)])]
+    solnsForTrip :: (Int, Int) -> [(Int, Int)] -- [(c, count)]
+    solsBelow = (scanl1 $ Control.Arrow.second . (+) . snd)
+                . execWriter . runStateT mEuler86 $ IM.empty
+    mEuler86 = mapM_ (\(c, xs) -> dumpComplete c >> updateCs xs) groupedSolns
+    updateCs = fmap modify . flip . foldr . uncurry $ IM.insertWith (+)
+    dumpComplete = (tell =<<) . state . partialUnfoldr . nextComplete
+    nextComplete key map = guard (not (IM.null map) && minK < key) >> Just dfm
+      where
+        dfm@((minK,_),_) = IM.deleteFindMin map
+    groupedSolns = map (fst . head &&& concatMap solnsForTrip) groupedPythags
+    groupedPythags = groupBy ((==) `on` fst) . map (\(x,y,_) -> (x,y)) $ pythags
+    solnsForTrip (x, y) = filter ((/= 0) . snd) [sft (x,y), sft (y,x)]
+    sft (a, b) = (a, max 0 (min (a+1) b - b + b `quot` 2))
