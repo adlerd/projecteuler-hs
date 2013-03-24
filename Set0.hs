@@ -8,6 +8,7 @@ import Data.Ord (comparing)
 import Input (input8)
 import Data.Maybe (catMaybes)
 import Control.Arrow ((&&&))
+import Control.Monad (guard)
 
 set0 :: [(Int, String)]
 set0 = zip [1..]
@@ -41,4 +42,7 @@ euler9 = show . product3 . justFind ((== 1000) . sum3) . catMaybes
     where
       sum3 (a,b,c) = a + b + c
       product3 (a,b,c) = a * b * c
-      testPair a b = return . (,,) a b =<< iSqrt (a^2+b^2)
+      testPair :: Int -> Int -> Maybe (Int, Int, Int)
+      testPair a b = do let (sqrt, exact) = iSqrt (a^2 + b^2)
+                        guard exact
+                        return $ (a,b,sqrt)

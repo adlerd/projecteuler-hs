@@ -59,9 +59,10 @@ euler44 = show . head $ [d |
                          isPentagonal k,
                          isPentagonal $ j+k]
     where
+      isPentagonal :: Int -> Bool
       isPentagonal n = case iSqrt (24*n+1) of
-                         Just b -> b `rem` 6 == 5
-                         Nothing -> False
+                         (b,True) -> b `rem` 6 == 5
+                         _ -> False
 pentagonals = scanl (+) 1 [4,7..]
 triangles = scanl (+) 1 [2..]
 hexagonals = scanl (+) 1 [5,9..]

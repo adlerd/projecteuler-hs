@@ -4,6 +4,8 @@ import Atkin
 import Data.List (unfoldr,tails,inits,foldl')
 import Sorted (count, uncount)
 import Data.Char (digitToInt,intToDigit)
+import Data.Bits
+import Data.Either (lefts)
 
 factors x
     | x > 0 = factors' primes x . sqrt . fromIntegral $ x
@@ -21,9 +23,21 @@ isPrime x = [x] == factors x
 allBut :: Int -> [a] -> [a]
 allBut n xs = zipWith (\a b -> a) xs $ drop n xs
 
-iSqrt x = if (guess * guess) == x then Just guess else Nothing
-    where
-      guess = round . sqrt . fromIntegral $ x
+iSqrt :: (Ord a, Bits a, Num a) => a -> (a, Bool)
+iSqrt 0 = (0, True)
+iSqrt n | n >= 0 = head . lefts . iterate (step =<<) $ Right (0, start)
+  where
+    startable x = (x <= n) && (x > 0)
+    start = last . takeWhile startable . iterate (`shiftL` 1) $ 1
+    step (root, 0) = Left (root, False)
+    step (root, c) = case compare sq n of
+                       GT -> Right (root, c')
+                       EQ -> Left (root', True)
+                       LT -> Right (root', c')
+      where
+        c' = c `shiftR` 1
+        root' = root .|. c
+        sq = root' * root'
 
 slide :: Int -> [a] -> [[a]]
 slide n = map (take n) . allBut n . tails
