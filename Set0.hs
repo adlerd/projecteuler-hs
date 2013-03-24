@@ -8,7 +8,7 @@ import Data.Ord (comparing)
 import Input (input8)
 import Data.Maybe (catMaybes)
 import Control.Arrow ((&&&))
-import Control.Monad (guard)
+import PTriplets (pythags)
 
 set0 :: [(Int, String)]
 set0 = zip [1..]
@@ -37,12 +37,7 @@ euler7 = show $ primes !! 10000
 
 euler8 = show . maximum . map product . slide 5 $ input8
 
-euler9 = show . product3 . justFind ((== 1000) . sum3) . catMaybes
-         $ [testPair a b | b <- [2..], a <- [1..b]]
+euler9 = show . product3 . justFind ((== 1000) . sum3) $ pythags
     where
       sum3 (a,b,c) = a + b + c
       product3 (a,b,c) = a * b * c
-      testPair :: Int -> Int -> Maybe (Int, Int, Int)
-      testPair a b = do let (sqrt, exact) = iSqrt (a^2 + b^2)
-                        guard exact
-                        return $ (a,b,sqrt)
