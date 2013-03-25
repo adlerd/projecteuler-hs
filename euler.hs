@@ -18,9 +18,16 @@ import Control.Monad (guard)
 import System.IO.Error (isEOFError)
 import Control.Arrow ((&&&))
 import System.IO
+import Control.Parallel.Strategies
 
 sets :: [[(Int, String)]]
 sets = [set0,set1,set2,set3,set4,set5,set6,set7,set8]
+
+parSets = map lookupProblem [41,44,50,51,73,75,78,87]
+
+sets' = snd . withStrategy s $ (parSets, concat sets)
+  where
+    s = parTuple2 (parList rdeepseq) r0
 
 lookupProblem n = fromJust . lookup n . (!! (n `quot` 10)) $ sets
 
@@ -33,7 +40,6 @@ main = sets `seq` do hSetBuffering stdout LineBuffering
 loop = do command <- getCommand
           case command of
            "q"     -> return ()
-           "check" -> mapM_ (hPrint stdout) . sortBy (comparing fst) . concat
-                      $ sets
+           "check" -> mapM_ (hPrint stdout) . sortBy (comparing fst) $ sets'
            _       -> (>> loop) . print . (id &&& lookupProblem)
                       . (read :: String -> Int) $ command
