@@ -1,29 +1,52 @@
 module Set7 (set7) where
 
 import Sorted (mergeMany,mergeInfinite,nub)
-import Data.List (minimumBy,sort,foldl',nub,groupBy,sortBy)
+import Data.List (minimumBy,sort,foldl',nub,groupBy,sortBy,unfoldr)
 import EulerUtil (totient,digits,lengthInRange,isPrime,undigits,justFind)
 import Data.Ord (comparing)
 import Data.Maybe (fromJust, mapMaybe)
 import Data.Ratio ((%),denominator)
 import qualified Data.MemoCombinators as MC
 import Input (input79)
+import Control.Parallel.Strategies
+import Data.Monoid
+import Control.DeepSeq
 
 set7 :: [(Int, String)]
 set7 = zip [70..]
        [euler70,euler71,euler72,euler73,euler74,euler75,euler76,euler77,euler78,
        euler79]
 
-euler70 = show . fst . fromJust $ foldl' fold Nothing [2..9999999]
+data MinSnd a b = NoMin | MinSnd { fromMinSnd :: (a,b) }
+
+instance (Ord b) => Monoid (MinSnd a b) where
+  mempty = NoMin
+  mappend NoMin NoMin = NoMin
+  mappend NoMin y@(MinSnd _) = y
+  mappend x@(MinSnd _) NoMin = x
+  mappend x@(MinSnd (_,xx)) y@(MinSnd (_,yy)) | xx > yy = y
+                                              | otherwise = x
+  mconcat = foldl' mappend mempty
+
+instance (NFData a, NFData b) => NFData (MinSnd a b) where
+  rnf NoMin = ()
+  rnf (MinSnd x) = rnf x
+
+euler70 = show . fst . fromMinSnd . mconcat . withStrategy s $ chunks
     where
-      fold m x
-          | minimizes && valid = Just (x, ratio)
-          | otherwise = m
-          where
-            minimizes = maybe True ((ratio <) . snd) m
-            valid = (sort . digits $ x) == (sort . digits $ t)
-            t = totient x
-            ratio = fromIntegral x / fromIntegral t
+      s = parList rdeepseq :: Strategy [MinSnd Int Float]
+      --inputChunks = unfoldr (mSplitAt 100000) [2..9999999]
+      -- construct the chunks manually, to save gobs of memory:
+      inputChunks = [2..10^6-1]:(map (\x -> [10^6*x..10^6*(x+1)-1]) [1..9])
+      chunks = map (mconcat . map validate) inputChunks
+      mSplitAt n [] = Nothing
+      mSplitAt n xs = Just $ splitAt n xs
+      validate x | valid = MinSnd (x,ratio)
+                 | otherwise = NoMin
+        where
+          valid = (sort . digits $ x) == (sort . digits $ t)
+          t = totient x
+          ratio = fromIntegral x / fromIntegral t
 
 euler71 = show . fst . last . takeWhile ((<= 1000000) . snd) . iterate closer $ (2,7)
     where
