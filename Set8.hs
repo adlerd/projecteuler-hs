@@ -5,7 +5,7 @@ module Set8 (set8) where
 import Data.List (mapAccumL,transpose,unfoldr,find,groupBy,sort)
 import EulerUtil (digits)
 import Data.Maybe (fromJust,mapMaybe)
-import Input (input81)
+import Input (input81,input89)
 import qualified PQ
 import Data.Array (bounds, (!), (//), Array, listArray)
 import Data.Ix (inRange)
@@ -19,10 +19,14 @@ import qualified Data.IntMap.Strict as IM
 import Data.Function (on)
 import Atkin (primes)
 import Sorted (nub)
+import Text.Parsec
+import Text.Parsec.String
+import Control.Applicative ((<$>),(<*>))
 
 set8 :: [(Int, String)]
 set8 = zip [80..]
-       [euler80,euler81,euler82,euler83,euler84,euler85,euler86,euler87,euler88]
+       [euler80,euler81,euler82,euler83,euler84,euler85,euler86,euler87,euler88,
+        euler89]
 
 euler80 = show . sum . concat . filter (\(_:xs) -> xs /= replicate 99 0)
           . map sqrtDigs $ [1..99]
@@ -168,3 +172,33 @@ euler88 = show . sum . nub . sort . IM.elems $ imap
            $ [[a] | a <- [2..limit]]
     imap :: IM.IntMap Int
     imap = IM.delete 1 . IM.fromListWith min . map (resultK &&& product) $ sets
+
+euler89 = show $ (sum . map length $ input89) -
+                   (sum . map (length . showRN . parseRN) $ input89)
+
+showRN :: Int -> String
+showRN = concat . unfoldr nextDigit
+nextDigit :: Int -> Maybe (String, Int)
+nextDigit n = find ((n >=) . snd) digs >>= return . second (n -)
+digs :: [(String, Int)]
+digs = map (id &&& parseRN)
+         ["M","CM","D","CD","C","XC","L","XL","X","IX","V","IV","I"]
+parseRN :: String -> Int
+parseRN = either (error "Failed to parse RN") id
+          . runParser (liftM sum . sequence $ parsers) () "input"
+parsers = [sumMany thousand,    option 0 $ subPair hundred thousand,
+           sumMany fivehundred, option 0 $ subPair hundred fivehundred,
+           sumMany hundred,     option 0 $ subPair ten hundred,
+           sumMany fifty,       option 0 $ subPair ten fifty,
+           sumMany ten,         option 0 $ subPair one ten,
+           sumMany five,        option 0 $ subPair one five,
+           sumMany one, eof >> return 0]
+      where
+        base :: Char -> Int -> Parser Int
+        subPair :: Parser Int -> Parser Int -> Parser Int
+        sumMany :: Parser Int -> Parser Int
+        base c v = char c >> return v
+        subPair c1 c2 = try $ subtract <$> c1 <*> c2
+        sumMany p = many p >>= return . sum
+        [thousand,fivehundred,hundred,fifty,ten,five,one]
+          = zipWith base "MDCLXVI" [1000,500,100,50,10,5,1]
