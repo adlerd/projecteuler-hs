@@ -2,7 +2,7 @@
 
 module Set8 (set8) where
 
-import Data.List (mapAccumL,transpose,unfoldr,find,groupBy)
+import Data.List (mapAccumL,transpose,unfoldr,find,groupBy,sort)
 import EulerUtil (digits)
 import Data.Maybe (fromJust,mapMaybe)
 import Input (input81)
@@ -17,10 +17,12 @@ import Control.Monad.Writer.Lazy
 import Control.Monad.State.Strict
 import qualified Data.IntMap.Strict as IM
 import Data.Function (on)
+import Atkin (primes)
+import Sorted (nub)
 
 set8 :: [(Int, String)]
 set8 = zip [80..]
-       [euler80,euler81,euler82,euler83,euler84,euler85,euler86]
+       [euler80,euler81,euler82,euler83,euler84,euler85,euler86,euler87,euler88]
 
 euler80 = show . sum . concat . filter (\(_:xs) -> xs /= replicate 99 0)
           . map sqrtDigs $ [1..99]
@@ -145,3 +147,24 @@ euler86 = show . fst . head . dropWhile ((< 1000000) . snd) $ solsBelow
     groupedPythags = groupBy ((==) `on` fst) . map (\(x,y,_) -> (x,y)) $ pythags
     solnsForTrip (x, y) = filter ((/= 0) . snd) [sft (x,y), sft (y,x)]
     sft (a, b) = (a, max 0 (min (a+1) b - b + b `quot` 2))
+
+euler87 = show . length . nub . sort $ sums
+  where
+    limit = 50000000
+    sums = do a <- takeWhile (< limit) $ map (^2) primes
+              b <- takeWhile (< limit - a) $ map (^3) primes
+              c <- takeWhile (< limit - a - b) $ map (^4) primes
+              return (a+b+c)
+
+euler88 = show . sum . nub . sort . IM.elems $ imap
+  where
+    limit = 12000 :: Int
+    resultK :: [Int] -> Int
+    resultK xs | product xs >= sum xs = length xs + product xs - sum xs
+    extend :: [Int] -> [[Int]]
+    extend set = takeWhile ((<= limit) . resultK) $ map (:set) [(head set)..]
+    sets :: [[Int]]
+    sets = concat . takeWhile (not . null) . iterate (concatMap extend)
+           $ [[a] | a <- [2..limit]]
+    imap :: IM.IntMap Int
+    imap = IM.delete 1 . IM.fromListWith min . map (resultK &&& product) $ sets
