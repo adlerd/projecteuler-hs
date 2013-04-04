@@ -9,6 +9,7 @@ import Set5
 import Set6
 import Set7
 import Set8
+import Set9
 
 import Data.Maybe (fromJust)
 import Data.List (sortBy)
@@ -21,7 +22,7 @@ import System.IO
 import Control.Parallel.Strategies
 
 sets :: [[(Int, String)]]
-sets = [set0,set1,set2,set3,set4,set5,set6,set7,set8]
+sets = [set0,set1,set2,set3,set4,set5,set6,set7,set8,set9]
 
 parSets = map lookupProblem [41,44,50,51,73,75,78,87]
 
