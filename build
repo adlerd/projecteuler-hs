@@ -1,2 +1,2 @@
 #!/bin/sh
-ghc -with-rtsopts='-N' -threaded -O --make euler
+ghc -outputdir 'bin' -with-rtsopts='-N' -threaded -O --make euler
