@@ -1,14 +1,18 @@
 module Set9 (set9) where
 
 import EulerUtil (rCombinations, digits)
-import Data.List (sort)
+import Data.List (sort,permutations,maximumBy)
 import Control.Monad (filterM)
 import Control.Monad.State.Lazy
 import qualified Data.IntMap.Strict as IM
+import qualified Sorted
+import Data.Ratio
+import Control.Arrow ((&&&))
+import Data.Ord (comparing)
 
 set9 :: [(Int, String)]
 set9 = zip [90..]
-       [euler90,euler91,euler92]
+       [euler90,euler91,euler92,euler93]
 
 euler90 = show . length . filter valid . pairs $ cubes
   where
@@ -43,3 +47,24 @@ euler92 = show . length . flip evalState initial . filterM valid $ [1..10000000]
                    _ -> do delegate <- valid (sum . map (^2) . digits $ x)
                            modify $ IM.insert x delegate
                            return delegate
+
+euler93 = fst . maximumBy (comparing snd) . map (disp &&& ct) $ groups
+  where
+    disp = concatMap show . map numerator
+    groups = rCombinations 4 ([1..9] :: [Rational])
+    liftOp f a b = return $ f a b
+    ops = [div,flip div] ++ map liftOp [(+),(*),(-),flip (-)]
+    -- we use the flipped versions of (-) and div /instead of/ implementing
+    -- precedence. Therefore it's not redundant with taking the permutations of
+    -- a,b,c,d. The permutation selected sets the evaulation order, and the
+    -- flipped versions allow one or the other operation.
+    div _ 0 = mzero
+    div x y = return $ x / y
+    vals [a,b,c,d] = do [w,x,y,z] <- permutations [a,b,c,d]
+                        f <- ops
+                        g <- ops
+                        h <- ops
+                        ret <- f w =<< g x =<< h y z
+                        guard $ denominator ret == 1 && ret > 0
+                        return $ numerator ret
+    ct = length . takeWhile id . zipWith (==) [1..] . Sorted.nub . sort . vals
