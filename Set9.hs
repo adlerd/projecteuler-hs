@@ -1,6 +1,6 @@
 module Set9 (set9) where
 
-import EulerUtil (rCombinations, digits)
+import EulerUtil (rCombinations, digits, iSqrt)
 import Data.List (sort,permutations,maximumBy)
 import Control.Monad (filterM)
 import Control.Monad.State.Lazy
@@ -12,7 +12,7 @@ import Data.Ord (comparing)
 
 set9 :: [(Int, String)]
 set9 = zip [90..]
-       [euler90,euler91,euler92,euler93]
+       [euler90,euler91,euler92,euler93,euler94]
 
 euler90 = show . length . filter valid . pairs $ cubes
   where
@@ -68,3 +68,16 @@ euler93 = fst . maximumBy (comparing snd) . map (disp &&& ct) $ groups
                         guard $ denominator ret == 1 && ret > 0
                         return $ numerator ret
     ct = length . takeWhile id . zipWith (==) [1..] . Sorted.nub . sort . vals
+
+euler94 = show . sum . takeWhile (< limit) $ do
+    ab <- drop 2 alpha
+    c <- [ab+1,ab-1]
+    let s = ab+c`quot`2
+    guard . snd . iSqrt $ s*(s-c)
+    return $ 2*s
+  where
+    limit = 1000000000 :: Integer
+    alpha :: [Integer]
+    alpha = 1:1:(zipWith3 ajoin (tail alpha) alpha [2..])
+    ajoin l1 l2 n | even n = 4*l1 - l2 + 2
+    ajoin l1 l2 n | otherwise = 4*l1 - l2 - 2
