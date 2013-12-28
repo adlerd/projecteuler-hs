@@ -1,11 +1,10 @@
 module Set0 (set0) where
 
 import Atkin (primes)
-import Sorted (union)
+import Sorted (union,mergeMany)
 import EulerUtil (factors, slide, fibonacci, isPalindrome, justFind)
 import Data.List (foldl1')
 import Input (input8)
-import Data.Maybe (catMaybes)
 import Control.Arrow ((&&&))
 import PTriplets (pythags)
 
@@ -19,12 +18,10 @@ euler2 = show . sum . filter even . takeWhile (< 4000000) $ fibonacci
 
 euler3 = show . last . factors $ 600851475143
 
-euler4 = show . maximum . catMaybes
-         . map (last' . filter (isPalindrome . show)) $ products
+euler4 = justFind isPalindrome . map (show . negate) . mergeMany $ products
     where
-      products = [[x*y | y <- [x..999]] | x <- [100..999]]
-      last' [] = Nothing
-      last' xs = Just . last $ xs
+      products :: [[Int]]
+      products = [[-x*y | y <- [999,998..x]] | x <- [999,998..100]]
 
 euler5 = show . foldl1' lcm $ [1..20]
 
