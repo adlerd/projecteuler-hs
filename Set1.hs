@@ -88,7 +88,7 @@ euler18 = show $ reduceTri input18
 reduceTri = head . foldr1 (\top bottom -> zipWith (+) top (reduceRow bottom))
     where
       reduceRow :: (Ord a) => [a] -> [a]
-      reduceRow = map (\[a,b] -> max a b) . slide 2
+      reduceRow r = zipWith max r (tail r)
 
 euler19 = show . length . filter ((== SUN) . fst) . filter ((== 1) . day . snd)
           . takeWhile ((< 2001) . year . snd) . dropWhile ((< 1901) . year. snd)
