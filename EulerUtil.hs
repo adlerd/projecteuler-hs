@@ -56,9 +56,7 @@ divisors n = map (product . uncount . zip pfs) . enumerateMCs $ fcs
       (pfs,fcs) = unzip . count . factors $ n
       enumerateMCs = foldr (\ct mcs -> concatMap (\mc -> map (:mc) [0..ct]) mcs) [[]]
 
-fibonacci = fib 1 1
-    where
-      fib a b = a : fib b (b+a)
+fibonacci = 1 : 1 : zipWith (+) fibonacci (tail fibonacci)
 
 digits :: (Integral a, Show a) => a -> [Int]
 digits = map digitToInt . show
