@@ -39,8 +39,8 @@ euler70 = show . fst . fromMinSnd . mconcat . withStrategy s $ chunks
       -- construct the chunks manually, to save gobs of memory:
       inputChunks = [2..10^6-1]:(map (\x -> [10^6*x..10^6*(x+1)-1]) [1..9])
       chunks = map (mconcat . map validate) inputChunks
-      mSplitAt n [] = Nothing
-      mSplitAt n xs = Just $ splitAt n xs
+      --mSplitAt n [] = Nothing
+      --mSplitAt n xs = Just $ splitAt n xs
       validate x | valid = MinSnd (x,ratio)
                  | otherwise = NoMin
         where
