@@ -2,7 +2,7 @@
 
 module Set8 (set8) where
 
-import Data.List (mapAccumL,transpose,unfoldr,find,groupBy,sort)
+import Data.List (mapAccumL,transpose,unfoldr,find,sort)
 import EulerUtil (digits)
 import Data.Maybe (fromJust,mapMaybe)
 import Input (input81,input89)
@@ -10,13 +10,11 @@ import qualified PQ
 import Data.Array (bounds, (!), (//), Array, listArray)
 import Data.Ix (inRange)
 import Control.Monad (guard)
-import Control.Arrow ((&&&),first,second)
+import Control.Arrow ((&&&),second)
 import Monopoly
 import PTriplets (pythags)
-import Control.Monad.Writer.Lazy
-import Control.Monad.State.Strict
+import Control.Monad.State.Lazy
 import qualified Data.IntMap.Strict as IM
-import Data.Function (on)
 import Atkin (primes)
 import Sorted (nub)
 import Text.Parsec
@@ -124,33 +122,22 @@ euler85 = show . fst . foldl1 smaller . map (area &&& subtract target . rCount)
                       return ([h,l], over h)
     smaller a'@(_,a) b'@(_,b) = if abs a <= abs b then a' else b'
 
-partialUnfoldr :: (b -> Maybe (a, b)) -> b -> ([a], b)
-partialUnfoldr f d = case f d of
-                       Just (e,d') -> first (e:) $ partialUnfoldr f d'
-                       Nothing -> ([], d)
-
-euler86 = show . fst . head . dropWhile ((< 1000000) . snd) $ solsBelow
+euler86 = show . fst . head . dropWhile ((< 1000000) . snd) $ runningTotal
   where
-    solsBelow :: [(Int, Int)]
-    mEuler86 :: (MonadState (IM.IntMap Int) m, MonadWriter [(Int, Int)] m) => m ()
-    updateCs :: (MonadState (IM.IntMap Int) m) => [(Int, Int)] -> m ()
-    dumpComplete :: (MonadState (IM.IntMap Int) m, MonadWriter [(Int, Int)] m) =>
-                      IM.Key -> m ()
-    nextComplete :: IM.Key -> IM.IntMap a -> Maybe ((IM.Key, a), IM.IntMap a)
-    groupedSolns :: [(Int, [(Int, Int)])]
-    solnsForTrip :: (Int, Int) -> [(Int, Int)] -- [(c, count)]
-    solsBelow = (scanl1 $ Control.Arrow.second . (+) . snd)
-                . execWriter . runStateT mEuler86 $ IM.empty
-    mEuler86 = mapM_ (\(c, xs) -> dumpComplete c >> updateCs xs) groupedSolns
-    updateCs = fmap modify . flip . foldr . uncurry $ IM.insertWith (+)
-    dumpComplete = (tell =<<) . state . partialUnfoldr . nextComplete
-    nextComplete key map = guard (not (IM.null map) && minK < key) >> Just dfm
+    runningTotal = zip fsts . scanl1 (+) $ snds
       where
-        dfm@((minK,_),_) = IM.deleteFindMin map
-    groupedSolns = map (fst . head &&& concatMap solnsForTrip) groupedPythags
-    groupedPythags = groupBy ((==) `on` fst) . map (\(x,y,_) -> (x,y)) $ pythags
-    solnsForTrip (x, y) = filter ((/= 0) . snd) [sft (x,y), sft (y,x)]
-    sft (a, b) = (a, max 0 (min (a+1) b - b + b `quot` 2))
+        (fsts,snds) = unzip totals
+    totals = concat . flip evalState IM.empty . mapM updateTriplet $ pythags
+    updateTriplet (a,b,_) = do mapM_ updateSingle $ solnsForPy (a,b)
+                               removeComplete a
+    updateSingle (m,ct) = modify $ IM.insertWith (+) m ct
+    removeComplete i = do map <- get
+                          let (first@(minK,_),rest) = IM.deleteFindMin map
+                          if minK < i
+                            then put rest >> fmap (first:) (removeComplete i)
+                            else return []
+    solnsForPy (x, y) = filter ((> 0) . snd) [sft (x,y), sft (y,x)]
+    sft (a, b) = (a, min (a+1) b - b + b `quot` 2)
 
 euler87 = show . length . nub . sort $ sums
   where
