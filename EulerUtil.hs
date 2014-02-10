@@ -71,9 +71,11 @@ isPalindrome xs = take n xs == take n (reverse xs)
     where
       n = length xs `quot` 2
 
-rCombinations 1 xs = map (:[]) xs
-rCombinations r xs = concatMap (\t -> map ((head t) :) . rCombinations (r-1) . tail $ t)
-                     . allBut 1 . tails $ xs
+rCombinations :: Int -> [a] -> [[a]]
+rCombinations 0 xs = [[]]
+rCombinations r xs = do (head:rest) <- allBut r . tails $ xs
+                        c <- rCombinations (r-1) rest
+                        return $ head:c
 
 lengthInRange l u xs
     | l < 0 || u < l = undefined
