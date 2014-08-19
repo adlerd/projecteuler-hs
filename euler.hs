@@ -35,8 +35,8 @@ lookupProblem n = fromJust . lookup n . (!! (n `quot` 10)) $ sets
 getCommand = CE.catchJust (guard . isEOFError) getLine (\_ -> return "q")
 
 
-main = sets `seq` do hSetBuffering stdout LineBuffering
-                     loop
+main = do hSetBuffering stdout LineBuffering
+          loop
 
 loop = do command <- getCommand
           case command of
