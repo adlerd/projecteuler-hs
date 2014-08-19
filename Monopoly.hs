@@ -1,6 +1,7 @@
 module Monopoly (euler84) where
 
 import Control.Arrow
+import Control.Applicative
 import Control.DeepSeq
 import Control.Monad
 import Data.Array
@@ -20,6 +21,10 @@ instance (NFData a => NFData (Chances a)) where
 instance (Monad Chances) where
   return = Ch . (:[]) . flip (,) 1
   m >>= f = Ch [(y, xp*yp) | (x, xp) <- unCh m, (y, yp) <- unCh $ f x]
+
+instance (Applicative Chances) where
+  pure = return
+  (<*>) = ap
 
 instance (Functor Chances) where
   fmap f = Ch . map (first f) . unCh
