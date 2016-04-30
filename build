@@ -1,2 +1,0 @@
-#!/bin/sh
-ghc -outputdir 'bin' -with-rtsopts='-N' -threaded -O --make euler
