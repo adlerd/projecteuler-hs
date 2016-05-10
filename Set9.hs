@@ -1,18 +1,18 @@
 module Set9 (set9) where
 
-import EulerUtil (rCombinations, digits, iSqrt)
-import Data.List (sort,permutations,maximumBy)
+import EulerUtil (rCombinations, digits, iSqrt, divisorFun)
+import Data.List (sort,permutations,maximumBy,unfoldr)
 import Control.Monad (filterM)
 import Control.Monad.State.Lazy
 import qualified Data.IntMap.Strict as IM
 import qualified Sorted
 import Data.Ratio
-import Control.Arrow ((&&&))
+import Control.Arrow ((&&&),first)
 import Data.Ord (comparing)
 
 set9 :: [(Int, String)]
 set9 = zip [90..]
-       [euler90,euler91,euler92,euler93,euler94]
+       [euler90,euler91,euler92,euler93,euler94,euler95]
 
 euler90 = show . length . filter valid . pairs $ cubes
   where
@@ -81,3 +81,13 @@ euler94 = show . sum . takeWhile (< limit) $ do
     alpha = 1:1:(zipWith3 ajoin (tail alpha) alpha [2..])
     ajoin l1 l2 n | even n = 4*l1 - l2 + 2
     ajoin l1 l2 n | otherwise = 4*l1 - l2 - 2
+
+euler95 = show . fst . last . concat . unfoldr (done' . chain) $ start
+  where
+    limit = 1000001
+    done' im = guard (not $ IM.null im) >> return (done im)
+    done = first (take 1 . IM.toAscList) . IM.partitionWithKey selfsame
+    selfsame n (_,nth) = n == nth
+    chain im = IM.mapMaybe (\(next,nth) -> fmap (\(next',_) -> (next,next')) $ IM.lookup nth im) im
+    start = IM.fromList . map (\n -> let x = divisorFun 1 n - n in (n,(x,x)))
+            $ [2..limit-1]
